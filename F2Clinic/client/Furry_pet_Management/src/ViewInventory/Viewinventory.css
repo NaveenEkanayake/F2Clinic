@@ -1,0 +1,6 @@
+.button-container-view {
+    display: flex;
+    justify-content: center;
+    margin-left: 3px;
+    /* Adjust this value as needed */
+}

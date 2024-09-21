@@ -1,0 +1,317 @@
+.hover-text__inner {
+    position: relative;
+    transition: color 0.3s ease-in-out;
+    color: white;
+}
+
+.hover-text:hover .hover-text__inner {
+    color: rgb(11, 179, 235);
+}
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.hover-text__inner:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: rgb(11, 179, 235);
+    bottom: 0;
+    left: 0;
+    transition: transform 0.3s ease-in-out;
+    transform: scaleX(0);
+}
+
+.hover-text:hover .hover-text__inner:after {
+    transform: scaleX(1);
+}
+
+.slider-container {
+    width: 100%;
+}
+
+.about-us-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.about-us-image {
+    flex: 1;
+}
+
+.about-us-image img {
+    width: 100%;
+    height: auto;
+}
+
+.about-us-info {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: rgba(16, 180, 230, 0.445);
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-divider {
+    height: 1px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    background-color: #ccc;
+}
+
+.service-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Style for the service box */
+
+.service-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 0 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add box shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Add transition */
+}
+
+
+/* Style for the service image */
+
+.service-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    /* Add transition */
+}
+
+
+/* Style for the service description */
+
+
+/* Style for the service container */
+
+.service-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Style for the service box */
+
+.service-box {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 0 20px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Add box shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Add transition */
+}
+
+
+/* Style for the service image */
+
+.service-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    /* Add transition */
+}
+
+
+/* Style for the service description */
+
+.service-description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    transform: translateY(100%);
+    /* Initially hide description */
+    transition: transform 0.3s ease;
+}
+
+.service-box:hover .service-description {
+    transform: translateY(0);
+}
+
+.service-box:hover .service-image {
+    transform: scale(1.1);
+    filter: blur(1px);
+}
+
+.service-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    font-size: semibold 10px;
+}
+
+.service-header-overlay h3 {
+    color: white;
+}
+
+.dark-mode {
+    background-color: black;
+    color: white;
+}
+
+.dark-mode .service-description p {
+    color: black;
+}
+
+.testimonial {
+    padding-top: 100px;
+}
+
+.testimonial .col-3 {
+    text-align: center;
+    padding: 40PX 20px;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+.testimonial .col-3 img {
+    width: 50px;
+    margin-top: 20px;
+    border-radius: 50%;
+}
+
+.testimonial .col-3:hover {
+    transform: translateY(-10px);
+}
+
+.col-3 p {
+    font-size: 12px;
+    margin: 12px 0;
+    color: #555;
+}
+
+.testimonial {
+    padding-top: 100px;
+}
+
+.testimonial .col-3 {
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.5s;
+    width: 20%;
+    height: 400px;
+    margin-left: 10px;
+}
+
+.testimonial .col-3 img {
+    width: 50px;
+    margin-top: 20px;
+    border-radius: 50%;
+}
+
+.testimonial .col-3:hover {
+    transform: translateY(-10px);
+}
+
+.col-3 p {
+    font-size: 12px;
+    margin: 12px 0;
+    color: slategray;
+}
+
+#client-says {
+    text-align: center;
+}
+
+.testimonial-heading {
+    margin-top: 30px;
+    font-weight: 1000;
+    font-size: 50px;
+    font-style: semibold;
+    width: 100%;
+    margin-bottom: 24px;
+    margin-top: 0;
+}
+
+.testimonial {
+    padding-top: 100px;
+}
+
+.testimonial .col-3 {
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.5s;
+    width: 20%;
+    height: 400px;
+    margin-left: 10px;
+}
+
+.testimonial .col-3 img {
+    width: 50px;
+    margin-top: 20px;
+    border-radius: 50%;
+}
+
+.testimonial .col-3:hover {
+    transform: translateY(-10px);
+}
+
+.col-3 p {
+    font-size: 12px;
+    margin: 12px 0;
+    color: slategray;
+}

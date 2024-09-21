@@ -1,0 +1,38 @@
+.consultant-divider {
+    width: 100%;
+    height: 1px;
+    background-color: #ccc;
+    margin: 40px 0;
+}
+
+.consultant-form-group {
+    margin-bottom: 40px;
+}
+
+.consultant-form-group label {
+    font-size: 16px;
+}
+
+.consultant-form-group input,
+.consultant-form-group select {
+    width: 100%;
+    padding: 1rem 1rem;
+    /* Adjusted padding */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.consultant-form-group input:focus,
+.consultant-form-group select:focus {
+    outline: none;
+}
+
+.consultant-login-button {
+    padding: 0.75rem 3.5rem;
+}
+
+.consultant-form-wrapper {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}

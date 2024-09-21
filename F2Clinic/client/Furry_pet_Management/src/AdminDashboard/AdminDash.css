@@ -1,0 +1,212 @@
+.heading {
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-left: 70px;
+}
+
+.schedule {
+    font-size: 14px;
+    color: #4b5563;
+    margin-bottom: 16px;
+    margin-left: 105px;
+    font-weight: 400;
+}
+
+.box {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-left: 20px;
+    width: 500px;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.calendar-container {
+    margin-right: 20px;
+}
+
+.box {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.recent-activities {
+    margin-top: 1rem;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.green-dot {
+    background-color: green;
+}
+
+.red-dot {
+    background-color: red;
+}
+
+.clock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: black;
+}
+
+.clock .hour-hand,
+.clock .minute-hand,
+.clock .second-hand {
+    position: absolute;
+    background-color: #333;
+}
+
+.clock .hour-hand {
+    width: 4px;
+    height: 30px;
+    transform-origin: 50% 100%;
+}
+
+.clock .minute-hand {
+    width: 3px;
+    height: 40px;
+    transform-origin: 50% 100%;
+}
+
+.clock .second-hand {
+    width: 2px;
+    height: 45px;
+    background-color: red;
+    transform-origin: 50% 100%;
+}
+
+.clock .center-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #333;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+i {
+    position: relative;
+    left: -37px;
+}
+
+.social {
+    position: absolute;
+    right: 35px;
+    bottom: 35px;
+}
+
+.social img {
+    display: block;
+    width: 32px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table,
+th,
+td {
+    outline: none;
+    padding-bottom: 20px;
+}
+
+th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.speciality {
+    text-align: right;
+}
+
+.hover-text {
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.hover-text:hover {
+    color: lightskyblue;
+}
+
+
+/* SearchBar.css */
+
+.search-bar-container {
+    position: relative;
+}
+
+.search-input {
+    padding: 15px 40px 15px 40px;
+    border: none;
+    outline: none;
+    transition: border-color 0.3s ease;
+    width: 200px;
+    color: #525252;
+    font-size: 16px;
+    font-weight: 100;
+    letter-spacing: 2px;
+    background: linear-gradient(to right, #ffffff 0%, #464747 #f9f9f9 100%);
+    border-radius: 5px;
+    margin-left: 1200px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    margin-left: 1200px;
+}
+
+.search-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.search-icon:hover {
+    color: #0069d9;
+}
+
+.search-input.expanded {
+    width: 300px;
+    /* Adjust width as needed */
+}
+
+.search-icon.expanded {
+    padding: 10px;
+    /* Adjust padding as needed */
+}
+
+.clock {
+    margin-bottom: 130px;
+}
