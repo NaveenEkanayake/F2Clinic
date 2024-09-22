@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import backgroundImage from "../assets/Consultantlogin.jpg";
@@ -29,7 +29,7 @@ function Consultantlogin() {
         className="relative w-full h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center" >
+        <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
           <div className="bg-white bg-opacity-70 p-16 rounded-2xl w-full max-w-xl shadow-lg">
             <h1
               className="text-4xl font-bold text-center text-gray-800 mb-10"
@@ -77,9 +77,12 @@ function Consultantlogin() {
                 </div>
               ))}
               <div className="mb-8 text-center">
-                <a href="#" className="text-blue-500 hover:underline">
+                <Link
+                  to="/Consultant"
+                  className="text-blue-500 hover:underline"
+                >
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <button
                 type="submit"

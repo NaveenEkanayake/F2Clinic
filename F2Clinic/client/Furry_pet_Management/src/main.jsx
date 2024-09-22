@@ -24,6 +24,12 @@ import ConsultantDashboard from "./ConsultantDashboard/index.jsx";
 import ConsultantSettings from "./SettingsConsultant/index.jsx";
 import PetRecord from "../src/ConsultantTable2/index.jsx";
 import ContactUs from "./Contactus/index.jsx";
+import EmailForm from "./Userforgotpass/index1.jsx";
+import EmailForm2 from "./Userforgotpass/index2.jsx";
+import EmailAdmin1 from "./Adminforgot/index1.jsx";
+import EmailAdmin2 from "./Adminforgot/index2.jsx";
+import EmailConsultant from "./Consultantforgot/index1.jsx";
+import Consultant2 from "./Consultantforgot/index2.jsx";
 import { initializeApp } from "firebase/app";
 
 import firebase from "firebase/compat/app";
@@ -122,6 +128,30 @@ const router = createBrowserRouter([
   {
     path: "/contactus",
     element: <ContactUs />,
+  },
+  {
+    path: "/EmailForm",
+    element: <EmailForm />,
+  },
+  {
+    path: "/EmailForm2",
+    element: <EmailForm2 />,
+  },
+  {
+    path: "/EmailAdmin1 ",
+    element: <EmailAdmin1 />,
+  },
+  {
+    path: "/EmailAdmin2",
+    element: <EmailAdmin2 />,
+  },
+  {
+    path: "/Consultant",
+    element: <EmailConsultant />,
+  },
+  {
+    path: "/Consultant2",
+    element: <Consultant2 />,
   },
 ]);
 

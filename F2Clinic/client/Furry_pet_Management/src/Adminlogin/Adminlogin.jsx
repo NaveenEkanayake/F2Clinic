@@ -6,6 +6,7 @@ import backgroundImage from "../assets/beauty.avif";
 import Navbar from "../AdminNav/Navbar";
 import Footer from "../Footer";
 import { FaSignInAlt } from "react-icons/fa"; // Import the icon
+import { Link } from "react-router-dom";
 
 function Adminlogin() {
   const [data, setData] = useState({
@@ -106,9 +107,12 @@ function Adminlogin() {
                 </div>
               ))}
               <div className="mb-8 text-center">
-                <a href="#" className="text-blue-500 hover:underline">
+                <Link
+                  to="/EmailAdmin1 "
+                  className="text-blue-500 hover:underline"
+                >
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <button
                 type="submit"

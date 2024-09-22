@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import NavbarLogin from "../LoginNav/index";
 import { FaSignInAlt } from "react-icons/fa"; // Import the icon
+import { Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -124,9 +125,9 @@ function Login() {
                 </div>
               ))}
               <div className="mb-8 text-center">
-                <a href="#" className="text-blue-500 hover:underline">
+                <Link to="/EmailForm" className="text-blue-500 hover:underline">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <button
                 type="submit"
