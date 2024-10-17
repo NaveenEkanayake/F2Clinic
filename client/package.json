@@ -10,8 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.4",
+    "@mui/material": "^6.1.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.11.8",
     "ionicons": "^7.4.0",
+    "lucide-react": "^0.453.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-fast-marquee": "^1.6.5",
@@ -19,8 +26,11 @@
     "react-router-dom": "^6.27.0",
     "react-scroll": "^1.9.0",
     "react-slick": "^0.30.2",
+    "recharts": "^2.13.0",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.1.14"
+    "swiper": "^11.1.14",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

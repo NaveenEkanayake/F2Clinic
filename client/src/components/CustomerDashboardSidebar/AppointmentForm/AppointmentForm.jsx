@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import DashboardSidebar from "../../components/CustomerDashboardSidebar/DashboardSidebar";
-import DashboardContents from "../../components/CustomerDashboardSidebar/CustomerDashboardContents/DashboardContents";
+import DashboardSidebar from "../../../components/CustomerDashboardSidebar/DashboardSidebar";
+import AppointmentContents from "./AppointmentContents/AppointmentContents";
 
-const CustomerDashboard = () => {
+const AppointmentForm= () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -11,10 +11,10 @@ const CustomerDashboard = () => {
         <DashboardSidebar open={isSidebarOpen} setOpen={setIsSidebarOpen} />
       </div>
       <div className="flex-grow">
-        <DashboardContents isSidebarOpen={isSidebarOpen} />
+        <AppointmentContents isSidebarOpen={isSidebarOpen} />
       </div>
     </div>
   );
 };
 
-export default CustomerDashboard;
+export default AppointmentForm;

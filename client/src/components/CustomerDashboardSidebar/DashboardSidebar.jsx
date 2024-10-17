@@ -7,11 +7,13 @@ import AppointmentIcon from "../../assets/images/Records.jpg";
 import PetRecordsIcon from "../../assets/images/Records.jpg";
 import Setting from "../../assets/images/settings.jpg";
 import Logout from "../../assets/images/Logout.webp";
+import Notification from "../../assets/images/Notification.png";
+import Supplies from "../../assets/images/PetEssentials.webp";
 
-const DashboardSidebar = () => {
-  const [open, setOpen] = useState(true);
+const DashboardSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
+  const [notificationsCount, setNotificationsCount] = useState(1);
 
   const toggleAppointmentDropdown = () =>
     setIsAppointmentOpen(!isAppointmentOpen);
@@ -29,6 +31,7 @@ const DashboardSidebar = () => {
           !open ? "rotate-180" : "rotate-0"
         }`}
         onClick={() => setOpen(!open)}
+        alt="Toggle Sidebar"
       />
       <div className="flex gap-4 items-center">
         <img
@@ -39,11 +42,7 @@ const DashboardSidebar = () => {
           alt="Logo"
         />
         {open && (
-          <h1
-            className={`origin-center text-white text-[24px] font-normal transition-transform duration-300 ${
-              open ? "scale-100" : "scale-0"
-            }`}
-          >
+          <h1 className="origin-center text-white text-[24px] font-normal transition-transform duration-300">
             Furry Pet Clinic
           </h1>
         )}
@@ -75,19 +74,20 @@ const DashboardSidebar = () => {
               className={`w-5 h-5 mr-2 invert brightness-110 ${
                 open ? "w-5 h-5" : "w-10 h-10"
               }`}
+              alt="Appointment"
             />
             {open && <span>Appointment</span>}
           </div>
           {isAppointmentOpen && open && (
             <ul className="ml-6 space-y-2">
               <Link
-                to="/make-appointment"
+                to="/appointment"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
                 Make Appointment
               </Link>
               <Link
-                to="/view-appointment"
+                to="/viewappointment"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
                 View Appointment
@@ -105,6 +105,7 @@ const DashboardSidebar = () => {
             <img
               src={PetRecordsIcon}
               className="w-5 h-5 mr-2 invert brightness-110"
+              alt="Pet Records"
             />
             {open && <span>Pet Records</span>}
           </div>
@@ -125,6 +126,39 @@ const DashboardSidebar = () => {
             </ul>
           )}
         </div>
+
+        <Link
+          to="/settings"
+          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
+            !open ? "justify-center" : ""
+          }`}
+        >
+          <img
+            src={Supplies}
+            alt="Settings Icon"
+            className="h-6 w-6 mr-2 invert brightness-110"
+          />
+          {open && <span>Pet Care Supplies</span>}
+        </Link>
+        <Link
+          to="/Notifications"
+          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
+            !open ? "justify-center" : ""
+          }`}
+        >
+          <img
+            src={Notification}
+            alt="Settings Icon"
+            className="h-6 w-6 brightness-110"
+          />
+          {notificationsCount > 0 && (
+            <span className="absolute  mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {notificationsCount}
+            </span>
+          )}
+          {open && <span>Notification</span>}
+        </Link>
+
         <Link
           to="/settings"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
@@ -140,7 +174,7 @@ const DashboardSidebar = () => {
         </Link>
       </ul>
       <Link
-        to="/settings"
+        to="/logout"
         className={`flex items-center py-4 px-4 ${
           open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
         } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${
