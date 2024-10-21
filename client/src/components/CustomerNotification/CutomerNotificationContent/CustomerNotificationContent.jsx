@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import PreviousButton from "../PreviousButton/PreviousButton";
+import NextButton from "../NextButton/NextButton";
 
 const CustomerNotificationContent = ({ isSidebarOpen }) => {
   const messages = [
@@ -50,7 +52,7 @@ const CustomerNotificationContent = ({ isSidebarOpen }) => {
         {currentMessages.map((message) => (
           <div
             key={message.id}
-            className={` h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 ${
+            className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 ${
               isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
             }`}
           >
@@ -60,21 +62,15 @@ const CustomerNotificationContent = ({ isSidebarOpen }) => {
       </div>
 
       <div className="flex justify-between mt-5">
-        <button
-          onClick={handlePrevious}
-          disabled={currentPage === 1}
-          className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded disabled:opacity-50 ml-11"
-        >
-          Previous
-        </button>
-
-        <button
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-          className="py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded disabled:opacity-50 mr-11"
-        >
-          Next
-        </button>
+        <PreviousButton
+          currentPage={currentPage}
+          handlePrevious={handlePrevious}
+        />
+        <NextButton
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleNext={handleNext}
+        />
       </div>
     </>
   );
