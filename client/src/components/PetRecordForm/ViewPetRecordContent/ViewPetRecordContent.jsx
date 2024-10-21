@@ -1,7 +1,7 @@
 import React from "react";
-import AppointmentTable from "../AppointmentTable/Appointment";
+import ViewPetTable from "../ViewPetTable/ViewPetTable";
 
-const ViewAppointmentContents = ({ isSidebarOpen }) => {
+const ViewPetRecordContent = ({ isSidebarOpen }) => {
   return (
     <div
       className={`mt-8  ${
@@ -9,11 +9,11 @@ const ViewAppointmentContents = ({ isSidebarOpen }) => {
       }`}
     >
       <h1 className="text-slate-600 mb-7 font-semibold text-[26px]">
-        View Appointments
+        View Pet Records
       </h1>
-      <AppointmentTable />
+      <ViewPetTable />
     </div>
   );
 };
 
-export default ViewAppointmentContents;
+export default ViewPetRecordContent;

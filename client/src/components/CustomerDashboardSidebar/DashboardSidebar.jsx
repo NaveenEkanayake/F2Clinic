@@ -9,15 +9,23 @@ import Setting from "../../assets/images/settings.jpg";
 import Logout from "../../assets/images/Logout.webp";
 import Notification from "../../assets/images/Notification.png";
 import Supplies from "../../assets/images/PetEssentials.webp";
+import HomeIcon from "../../assets/images/Home.png";
+import DarkModeButton from "./DarkmodeButton/DarkModeButton";
+import ContactUs from "../../assets/images/ContactUs.png";
 
 const DashboardSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(1);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleAppointmentDropdown = () =>
     setIsAppointmentOpen(!isAppointmentOpen);
   const togglePetRecordsDropdown = () => setIsPetRecordsOpen(!isPetRecordsOpen);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
   return (
     <div
@@ -33,7 +41,7 @@ const DashboardSidebar = ({ open, setOpen }) => {
         onClick={() => setOpen(!open)}
         alt="Toggle Sidebar"
       />
-      <div className="flex gap-4 items-center">
+      <Link to="/customerdashboard" className="flex gap-4 items-center">
         <img
           src={logo}
           className={`duration-500 ${open ? "h-14 w-14" : "h-10 w-10"} ${
@@ -42,11 +50,14 @@ const DashboardSidebar = ({ open, setOpen }) => {
           alt="Logo"
         />
         {open && (
-          <h1 className="origin-center text-white text-[24px] font-normal transition-transform duration-300">
+          <Link
+            to="/customerdashboard"
+            className="origin-center text-white text-[24px] font-normal transition-transform duration-300"
+          >
             Furry Pet Clinic
-          </h1>
+          </Link>
         )}
-      </div>
+      </Link>
       <div className="flex flex-col items-center mt-8">
         <img
           src={Avatar}
@@ -62,6 +73,15 @@ const DashboardSidebar = ({ open, setOpen }) => {
         )}
       </div>
       <ul className="pt-8 space-y-2">
+        <Link
+          to="/customerdashboard"
+          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
+            !open ? "justify-center" : ""
+          }`}
+        >
+          <img src={HomeIcon} className="h-6 w-6 mr-2 invert brightness-110" />
+          {open && <span>Home</span>}
+        </Link>
         <div className="text-white">
           <div
             onClick={toggleAppointmentDropdown}
@@ -112,13 +132,13 @@ const DashboardSidebar = ({ open, setOpen }) => {
           {isPetRecordsOpen && open && (
             <ul className="ml-6 space-y-2">
               <Link
-                to="/add-pet-records"
+                to="/petRecord"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
                 Add Pet Records
               </Link>
               <Link
-                to="/view-pet-records"
+                to="/viewpetRecord"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
                 View Pet Records
@@ -128,20 +148,25 @@ const DashboardSidebar = ({ open, setOpen }) => {
         </div>
 
         <Link
-          to="/settings"
+          to="/petcaresupplies"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
             !open ? "justify-center" : ""
           }`}
         >
-          <img
-            src={Supplies}
-            alt="Settings Icon"
-            className="h-6 w-6 mr-2 invert brightness-110"
-          />
+          <img src={Supplies} className="h-6 w-6 mr-2 invert brightness-110" />
           {open && <span>Pet Care Supplies</span>}
         </Link>
         <Link
-          to="/Notifications"
+          to="/contactus"
+          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
+            !open ? "justify-center" : ""
+          }`}
+        >
+          <img src={ContactUs} className="h-6 w-6 mr-2 invert brightness-110" />
+          {open && <span>Contactus</span>}
+        </Link>
+        <Link
+          to="/Notification"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
             !open ? "justify-center" : ""
           }`}
@@ -159,19 +184,27 @@ const DashboardSidebar = ({ open, setOpen }) => {
           {open && <span>Notification</span>}
         </Link>
 
-        <Link
-          to="/settings"
-          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
-            !open ? "justify-center" : ""
-          }`}
-        >
-          <img
-            src={Setting}
-            alt="Settings Icon"
-            className="h-6 w-6 mr-2 invert brightness-110"
-          />
-          {open && <span>Settings</span>}
-        </Link>
+        <div className="relative">
+          <Link
+            onClick={toggleDropdown}
+            className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <img
+              src={Setting}
+              alt="Settings Icon"
+              className="h-6 w-6 mr-2 invert brightness-110"
+            />
+            {open && <span>Settings</span>}
+          </Link>
+
+          {dropdownOpen && (
+            <div className="absolute right-[40px] mt-2 w-64  bg-white shadow-lg rounded-md p-2">
+              <DarkModeButton />
+            </div>
+          )}
+        </div>
       </ul>
       <Link
         to="/logout"

@@ -14,7 +14,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
         >
           <div className="flex flex-col">
             <h1 className="text-black text-2xl font-normal items-center justify-center ml-9">
-              Appointments
+              Total Appointments
             </h1>
             <span
               className=" absolute inset-0 w-full h-4 top-44 bg-blue-600"
@@ -34,7 +34,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
         >
           <div className="flex flex-col">
             <h1 className="text-black text-2xl font-normal items-center justify-center ml-9">
-              Pet Records
+              Total Pet Records
             </h1>
             <span
               className=" absolute inset-0 w-full h-4 top-44 bg-blue-600"

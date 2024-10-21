@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import AppointmentSvg from "../AppointmentSVG/AppointmentSvg";
 import PersonalForm from "../PeronalForm/PersonalForm";
 import AppointmentNextButton from "../NextButton/NextButton";
+import PaymentForm from "../Payment/Payment";
 
 const AppointmentContents = ({ isSidebarOpen }) => {
   const [currentForm, setCurrentForm] = useState("appointment");
@@ -10,7 +11,9 @@ const AppointmentContents = ({ isSidebarOpen }) => {
   const handleBack = () => {
     setCurrentForm("appointment");
   };
-
+  const handleConfirmPayment = () => {
+    alert("Payment Confirmed!");
+  };
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <div className="flex w-full max-w-5xl">
@@ -95,13 +98,18 @@ const AppointmentContents = ({ isSidebarOpen }) => {
               </div>
               <AppointmentNextButton
                 currentForm={currentForm}
-                setCurrentForm={setCurrentForm}
+                setCurrentForm={() => setCurrentForm("personal")}
               >
                 Next
               </AppointmentNextButton>
             </form>
+          ) : currentForm === "personal" ? (
+            <PersonalForm
+              onBack={handleBack}
+              onNext={() => setCurrentForm("payment")}
+            />
           ) : (
-            <PersonalForm onBack={handleBack} />
+            <PaymentForm onBack={handleBack} onConfirm={handleConfirmPayment} />
           )}
         </motion.div>
       </div>
