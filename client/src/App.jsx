@@ -20,6 +20,8 @@ import AddPetCareMain from "./components/AdminContents/AddPetcareMain/AddPetCare
 import ViewPetCare from "./components/AdminContents/AddPetCare/ViewPetCare/ViewPetCare";
 import InventoryForm from "./components/AdminContents/AddInventory/InventoryForm";
 import ViewInventory from "./components/AdminContents/ViewInventory/ViewInventory";
+import ConsultantDashboard from "./pages/ConsultantDashboard/ConsultantDasahboard";
+import ConsultantPetRecord from "./components/AdminPetRecords/ConsultantPetRecord";
 function App() {
   return (
     <BrowserRouter>
@@ -44,6 +46,8 @@ function App() {
         <Route path="/viewpetcare" element={<ViewPetCare />} />
         <Route path="/Inventory" element={<InventoryForm />} />
         <Route path="/ViewInventory" element={<ViewInventory />} />
+        <Route path="/Consultantdashboard" element={<ConsultantDashboard />} />
+        <Route path="/ConsultantpetRecord" element={<ConsultantPetRecord />} />
       </Routes>
     </BrowserRouter>
   );
