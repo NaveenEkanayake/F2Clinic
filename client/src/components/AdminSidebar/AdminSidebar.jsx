@@ -3,29 +3,23 @@ import { Link } from "react-router-dom";
 import Sidebararrow from "../../assets/images/Sidebararrow.png";
 import logo from "../../assets/images/logo.png";
 import Avatar from "../../assets/images/avatar.png";
-import AppointmentIcon from "../../assets/images/Records.jpg";
-import PetRecordsIcon from "../../assets/images/Records.jpg";
-import Setting from "../../assets/images/settings.jpg";
+import ConsultantIcon from "../../assets/images/consultant.png";
 import Logout from "../../assets/images/Logout.webp";
+import Setting from "../../assets/images/settings.jpg";
 import Notification from "../../assets/images/Notification.png";
 import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
-import DarkModeButton from "./DarkmodeButton/DarkModeButton";
-import ContactUs from "../../assets/images/ContactUs.png";
+import DarkModeButton from "./DarkModeButton/DarkModeButton";
+import InventoryIcon from "../../assets/images/Inventory.png";
 
-const DashboardSidebar = ({ open, setOpen }) => {
+const AdminSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
-  const [notificationsCount, setNotificationsCount] = useState(1);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [notificationsCount] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const toggleAppointmentDropdown = () =>
-    setIsAppointmentOpen(!isAppointmentOpen);
-  const togglePetRecordsDropdown = () => setIsPetRecordsOpen(!isPetRecordsOpen);
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const toggleDropdown = (setter) => () => setter((prev) => !prev);
 
   return (
     <div
@@ -38,10 +32,10 @@ const DashboardSidebar = ({ open, setOpen }) => {
         className={`absolute cursor-pointer right-[-17px] top-9 border-4 border-[#081A51] rounded-full ${
           !open ? "rotate-180" : "rotate-0"
         }`}
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((prev) => !prev)}
         alt="Toggle Sidebar"
       />
-      <Link to="/customerdashboard" className="flex gap-4 items-center">
+      <Link to="/admindashboard" className="flex gap-4 items-center">
         <img
           src={logo}
           className={`duration-500 ${open ? "h-14 w-14" : "h-10 w-10"} ${
@@ -50,12 +44,9 @@ const DashboardSidebar = ({ open, setOpen }) => {
           alt="Logo"
         />
         {open && (
-          <Link
-            to="/customerdashboard"
-            className="origin-center text-white text-[24px] font-normal transition-transform duration-300"
-          >
+          <span className="origin-center text-white text-[24px] font-normal transition-transform duration-300">
             Furry Pet Clinic
-          </Link>
+          </span>
         )}
       </Link>
       <div className="flex flex-col items-center mt-8">
@@ -73,7 +64,7 @@ const DashboardSidebar = ({ open, setOpen }) => {
       </div>
       <ul className="pt-8 space-y-2">
         <Link
-          to="/customerdashboard"
+          to="/admindashboard"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
             !open ? "justify-center" : ""
           }`}
@@ -83,103 +74,111 @@ const DashboardSidebar = ({ open, setOpen }) => {
         </Link>
         <div className="text-white">
           <div
-            onClick={toggleAppointmentDropdown}
+            onClick={toggleDropdown(setIsAppointmentOpen)}
             className={`flex items-center py-4 px-4 hover:bg-blue-500 font-normal rounded-md cursor-pointer ${
               !open ? "justify-center" : ""
             }`}
           >
             <img
-              src={AppointmentIcon}
-              className={`w-5 h-5 mr-2 invert brightness-110 ${
-                open ? "w-5 h-5" : "w-10 h-10"
-              }`}
+              src={ConsultantIcon}
+              className={`w-5 h-5 mr-2 invert brightness-110`}
             />
-            {open && <span>Appointment</span>}
+            {open && <span>Consultant</span>}
           </div>
           {isAppointmentOpen && open && (
             <ul className="ml-6 space-y-2">
               <Link
-                to="/appointment"
+                to="/addconsultant"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
-                Make Appointment
+                Add Consultant
               </Link>
               <Link
-                to="/viewappointment"
+                to="/viewconsultant"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
-                View Appointment
+                View Consultant
               </Link>
             </ul>
           )}
         </div>
         <div className="text-white">
           <div
-            onClick={togglePetRecordsDropdown}
+            onClick={toggleDropdown(setIsPetRecordsOpen)}
             className={`flex items-center py-4 px-4 hover:bg-blue-500 font-normal rounded-md cursor-pointer ${
               !open ? "justify-center" : ""
             }`}
           >
             <img
-              src={PetRecordsIcon}
+              src={Supplies}
               className="w-5 h-5 mr-2 invert brightness-110"
             />
-            {open && <span>Pet Records</span>}
+            {open && <span>Pet Care Supplies</span>}
           </div>
           {isPetRecordsOpen && open && (
             <ul className="ml-6 space-y-2">
               <Link
-                to="/petRecord"
+                to="/addpetcare"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
-                Add Pet Records
+                Add Pet Care Supplies
               </Link>
               <Link
-                to="/viewpetRecord"
+                to="/viewpetcare"
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
-                View Pet Records
+                View Pet Care Supplies
               </Link>
             </ul>
           )}
         </div>
-
+        <div className="text-white">
+          <div
+            onClick={toggleDropdown(setIsInventoryOpen)}
+            className={`flex items-center py-4 px-4 hover:bg-blue-500 font-normal rounded-md cursor-pointer ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <img
+              src={InventoryIcon}
+              className="w-5 h-5 mr-2 invert brightness-110"
+            />
+            {open && <span>Inventory</span>}
+          </div>
+          {isInventoryOpen && open && (
+            <ul className="ml-6 space-y-2">
+              <Link
+                to="/Inventory"
+                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
+              >
+                Add Inventory
+              </Link>
+              <Link
+                to="/ViewInventory"
+                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
+              >
+                View Inventory
+              </Link>
+            </ul>
+          )}
+        </div>
         <Link
-          to="/petcaresupplies"
-          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
-            !open ? "justify-center" : ""
-          }`}
-        >
-          <img src={Supplies} className="h-6 w-6 mr-2 invert brightness-110" />
-          {open && <span>Pet Care Supplies</span>}
-        </Link>
-        <Link
-          to="/contactus"
-          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
-            !open ? "justify-center" : ""
-          }`}
-        >
-          <img src={ContactUs} className="h-6 w-6 mr-2 invert brightness-110" />
-          {open && <span>Contactus</span>}
-        </Link>
-        <Link
-          to="/Notification"
+          to="/adminNotification"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
             !open ? "justify-center" : ""
           }`}
         >
           <img src={Notification} className="h-6 w-6 brightness-110" />
           {notificationsCount > 0 && (
-            <span className="absolute  mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+            <span className="absolute mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
               {notificationsCount}
             </span>
           )}
           {open && <span>Notification</span>}
         </Link>
-
         <div className="relative">
           <Link
-            onClick={toggleDropdown}
+            onClick={toggleDropdown(() => setDropdownOpen((prev) => !prev))}
             className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
               !open ? "justify-center" : ""
             }`}
@@ -217,4 +216,4 @@ const DashboardSidebar = ({ open, setOpen }) => {
   );
 };
 
-export default DashboardSidebar;
+export default AdminSidebar;

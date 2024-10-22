@@ -11,6 +11,15 @@ import ViewPetRecords from "./components/PetRecordForm/ViewPetRecords/ViewPetRec
 import PetCareSupplies from "./components/PetCareSupplies/PetCareSupplies";
 import CustomerNotification from "./components/CustomerNotification/CustomerNotification";
 import CustomerContactUs from "./components/CustomerContactus/Customercontactus";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import AddConsultantForm from "./components/AdminContents/AddConsultantForm/AddConsultantForm";
+import ViewConsultant from "./components/AdminContents/ViewConsultant/ViewConsultant";
+import AdminNotification from "./components/AdminContents/AdminNotification/AdminNotification/AdminNotification";
+import AddPetCareContent from "./components/AdminContents/AddPetCare/AddPetcareContent";
+import AddPetCareMain from "./components/AdminContents/AddPetcareMain/AddPetCareMain";
+import ViewPetCare from "./components/AdminContents/AddPetCare/ViewPetCare/ViewPetCare";
+import InventoryForm from "./components/AdminContents/AddInventory/InventoryForm";
+import ViewInventory from "./components/AdminContents/ViewInventory/ViewInventory";
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +36,14 @@ function App() {
         <Route path="/petcaresupplies" element={<PetCareSupplies />} />
         <Route path="/Notification" element={<CustomerNotification />} />
         <Route path="/contactus" element={<CustomerContactUs />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/addconsultant" element={<AddConsultantForm />} />
+        <Route path="/viewconsultant" element={<ViewConsultant />} />
+        <Route path="/adminNotification" element={<AdminNotification />} />
+        <Route path="/addpetcare" element={<AddPetCareMain />} />
+        <Route path="/viewpetcare" element={<ViewPetCare />} />
+        <Route path="/Inventory" element={<InventoryForm />} />
+        <Route path="/ViewInventory" element={<ViewInventory />} />
       </Routes>
     </BrowserRouter>
   );

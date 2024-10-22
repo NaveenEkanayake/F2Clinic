@@ -1,6 +1,3 @@
-import AppointmentExpenses from "../AppointmentExpenses/AppointmentExpenses";
-import OtherExpenses from "../OtherExpenses/OtherExpenses";
-import DoctorTable from "../DoctorTable/DoctorTable";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -10,9 +7,9 @@ import CardContent from "@mui/material/CardContent";
 import * as React from "react";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import TotalExpenses from "../TotalExpenses/TotalExpenses";
+import AdminTable from "./AdminTable/AdminTable";
 
-const DashboardContents = ({ isSidebarOpen }) => {
+const AdminContents = ({ isSidebarOpen }) => {
   return (
     <>
       <Box sx={{ height: 20 }} />
@@ -45,7 +42,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                     component="div"
                     align="center"
                   >
-                    Total Appointments
+                    Total Registered Customers
                   </Typography>
                 </Box>
                 <Typography
@@ -86,7 +83,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                     align="center"
                     component="div"
                   >
-                    Total Pet Records
+                    Total Registered Consultants
                   </Typography>
                 </Box>
                 <Typography
@@ -108,7 +105,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                 color: "white",
               }}
               style={{
-                height: "887px",
+                height: "180px",
                 borderRadius: "20px",
               }}
             >
@@ -120,79 +117,31 @@ const DashboardContents = ({ isSidebarOpen }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <AttachMoneyIcon />
+                  <LocalHospitalIcon />
                   <Typography
                     gutterBottom
                     variant="h5"
                     align="center"
                     component="div"
                   >
-                    Total Appointment Expenses
+                    Total Inventory Items
                   </Typography>
                 </Box>
-                <AppointmentExpenses />
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                <Typography
+                  variant="h6"
+                  align="center"
+                  sx={{ color: "text.secondary" }}
+                  mt={4}
                 >
-                  <AttachMoneyIcon />
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    align="center"
-                    component="div"
-                  >
-                    Total Pet care Expenses
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyItems: "center",
-                    marginTop: "-50px",
-                  }}
-                >
-                  <OtherExpenses />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "-50px",
-                  }}
-                >
-                  <AttachMoneyIcon />
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    align="center"
-                    component="div"
-                  >
-                    Total Expenses
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyItems: "center",
-                    marginTop: "-50px",
-                  }}
-                >
-                  <TotalExpenses />
-                </Box>
+                  1
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={4} mt={-87}>
+        <Grid item xs={12} md={4} mt={2}>
           <Card
-            sx={{ maxWidth: 960 }}
+            sx={{ maxWidth: 1460 }}
             style={{
               height: "680px",
               borderRadius: "20px",
@@ -206,17 +155,17 @@ const DashboardContents = ({ isSidebarOpen }) => {
                   justifyContent: "center",
                 }}
               >
-                <PeopleAltIcon />
+                <AttachMoneyIcon />
                 <Typography
                   gutterBottom
                   variant="h5"
                   align="center"
                   component="div"
                 >
-                  Our Doctors
+                  Total Income
                 </Typography>
               </Box>
-              <DoctorTable />
+              <AdminTable />
             </CardContent>
           </Card>
         </Grid>
@@ -225,4 +174,4 @@ const DashboardContents = ({ isSidebarOpen }) => {
   );
 };
 
-export default DashboardContents;
+export default AdminContents;
