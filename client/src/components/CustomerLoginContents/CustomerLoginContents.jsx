@@ -2,8 +2,41 @@ import { IoMailOutline, IoLockClosedOutline } from "react-icons/io5";
 import { motion } from "framer-motion";
 import LoginImage from "../../assets/images/Customerlogin.jpg";
 import LoginButton from "../CustomerLoginButton/LoginButton";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react";
+import { Logincustomer } from "@/Api/config";
 
 const CustomerLoginContents = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Logincustomer({ email, password })
+      .then((result) => {
+        console.log("Login succufully ", result);
+        toast.success("Login successful!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          navigate("/home");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Login failed. Invalid Password or email already exist.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        if (err) {
+          navigate("/customerlogin");
+        }
+      });
+  };
   return (
     <div
       className="w-full min-h-screen flex items-center justify-center bg-center bg-cover"
@@ -32,15 +65,20 @@ const CustomerLoginContents = () => {
             Welcome Back to Furry Pet Clinic!!!
           </p>
         </div>
-        <form className="w-full h-auto flex flex-col items-center gap-7 px-10">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full h-auto flex flex-col items-center gap-7 px-10"
+        >
           <div className="w-full relative">
             <label className="text-white font-semibold ">Email</label>
             <div className="flex items-center mt-2">
               <IoMailOutline className="text-white mr-3" />
               <input
                 type="email"
+                name="email"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter your email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -50,13 +88,16 @@ const CustomerLoginContents = () => {
               <IoLockClosedOutline className="text-white mr-3" />
               <input
                 type="password"
+                name="password"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter your password"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
           <LoginButton>Login</LoginButton>
         </form>
+        <ToastContainer />
       </motion.div>
     </div>
   );

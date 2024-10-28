@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebararrow from "../../assets/images/Sidebararrow.png";
 import logo from "../../assets/images/logo.png";
@@ -6,8 +6,135 @@ import Avatar from "../../assets/images/avatar.png";
 import Logout from "../../assets/images/Logout.webp";
 import PetRecordsIcon from "../../assets/images/Records.jpg";
 import HomeIcon from "../../assets/images/Home.png";
+import app from "../Firebase/config";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import axios from "axios";
+import { verifyconsultant } from "../../Api/config";
 
 const ConsultantSidebar = ({ open, setOpen }) => {
+  const [inputs, setInputs] = useState({});
+  const [img, setImg] = useState(null);
+  const [ConsultantUrl, setConsultantUrl] = useState(
+    localStorage.getItem("ConsultantUrl") || Avatar
+  );
+  const fileInputRef = useRef(null);
+  const [consultantId, SetConsultantId] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    const verifyAdmin = async () => {
+      try {
+        const response = await verifyconsultant();
+        if (response && response.consultant) {
+          SetConsultantId(response.consultant._id);
+        } else {
+          console.error("consultant data not found in response:", response);
+        }
+      } catch (error) {
+        console.error("Error verifying admin:", error);
+      }
+    };
+
+    verifyconsultant();
+  }, []);
+  useEffect(() => {
+    if (img) {
+      uploadFile(img);
+    }
+  }, [img]);
+
+  useEffect(() => {
+    if (img) {
+      uploadFile(img);
+    }
+  }, [img]);
+
+  const uploadFile = (file) => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, `consultantprofile/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error("Error during upload:", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setConsultantUrl(downloadURL);
+          localStorage.setItem("ConsultantUrl", downloadURL);
+          setInputs((prev) => ({ ...prev, ConsultantUrl: downloadURL }));
+          handleSubmit();
+        });
+      }
+    );
+  };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImg(file);
+    }
+  };
+
+  useEffect(() => {
+    const storedConsultantUrl = localStorage.getItem("ConsultantUrl");
+    if (storedConsultantUrl) {
+      setConsultantUrl(storedConsultantUrl);
+    } else {
+      fetchImageUrl();
+    }
+  }, []);
+
+  const fetchImageUrl = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/getConsultantIMG"
+      );
+      const fetchedConsultantUrl = response.data.ConsultantUrl || Avatar;
+      if (fetchedConsultantUrl && fetchedConsultantUrl !== "null") {
+        setConsultantUrl(fetchedImgUrl);
+        localStorage.setItem("ConsultantUrl", fetchedConsultantUrl);
+      } else {
+        // If not valid, set to the default avatar
+        setConsultantUrl(Avatar);
+        localStorage.setItem("imgUrl", Avatar);
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      setConsultantUrl(Avatar);
+      localStorage.setItem("ConsultantUrl", Avatar);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/addConsultantimg",
+        {
+          ConsultantUrl: ConsultantUrl,
+        }
+      );
+      console.log("Image uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      if (error.response) {
+        console.error("Error message:", error.response.data);
+      }
+    }
+  };
   return (
     <div
       className={`${
@@ -38,16 +165,30 @@ const ConsultantSidebar = ({ open, setOpen }) => {
       </Link>
       <div className="flex flex-col items-center mt-8">
         <img
-          src={Avatar}
-          alt="Avatar"
+          src={ConsultantUrl}
           className={`rounded-full cursor-pointer ${
             open ? "w-24 h-24" : "w-10 h-10"
           }`}
+          onClick={() => setOpen(!open)}
+          alt="Avatar"
         />
         {open && (
-          <p className="text-white hover:text-blue-500 mt-2 cursor-pointer">
-            Add a Profile Pic
-          </p>
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              className="text-white hover:text-blue-500 mt-2 cursor-pointer"
+              onClick={() => fileInputRef.current.click()}
+            >
+              Add a Profile Pic
+            </button>
+          </>
         )}
       </div>
       <ul className="pt-8 space-y-2">

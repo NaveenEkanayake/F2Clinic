@@ -1,15 +1,85 @@
 import Box from "@mui/material/Box";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import * as React from "react";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AdminTable from "./AdminTable/AdminTable";
+import {
+  getInventoryCount,
+  verifyadmin,
+  getCustomerCount,
+  getConsultantCount,
+} from "../../Api/config";
 
 const AdminContents = ({ isSidebarOpen }) => {
+  const [count, setCount] = useState({});
+  const [countedCustomer, setCountedCustomer] = useState({ totalCount: 0 });
+  const [countedConsultants, setCountedConsultants] = useState({
+    totalCount: 0,
+  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const adminId = verifyadmin();
+        if (!adminId) {
+          console.log("Admin ID not found.");
+        }
+
+        const inventoryCount = await getInventoryCount();
+        console.log("Inventory Count Response:", inventoryCount);
+        setCount(inventoryCount);
+      } catch (err) {
+        console.error("Error fetching inventory count:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchCustomerCount = async () => {
+      try {
+        const adminId = verifyadmin();
+        if (!adminId) {
+          console.log("Admin ID not found.");
+        }
+
+        const RegisteredCustomerCount = await getCustomerCount();
+        console.log("Customer Count Response:", RegisteredCustomerCount);
+        setCountedCustomer({ totalCount: RegisteredCustomerCount.customers });
+      } catch (err) {
+        console.error("Error fetching Customercount:", err);
+      }
+    };
+
+    fetchCustomerCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchConsultantCount = async () => {
+      try {
+        const adminId = verifyadmin();
+        if (!adminId) {
+          console.log("Admin ID not found.");
+        }
+
+        const RegisteredConsultantCount = await getConsultantCount();
+        console.log("Consultant Count Response:", RegisteredConsultantCount);
+        setCountedConsultants({
+          totalCount: RegisteredConsultantCount.Consultants,
+        });
+      } catch (err) {
+        console.error("Error fetching Consultantcount:", err);
+      }
+    };
+
+    fetchConsultantCount();
+  }, []);
+
   return (
     <>
       <Box sx={{ height: 20 }} />
@@ -51,11 +121,12 @@ const AdminContents = ({ isSidebarOpen }) => {
                   sx={{ color: "text.secondary" }}
                   mt={4}
                 >
-                  1
+                  {countedCustomer.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
+
           <Grid item xs={12} md={4}>
             <Card
               sx={{
@@ -92,11 +163,12 @@ const AdminContents = ({ isSidebarOpen }) => {
                   mt={4}
                   sx={{ color: "text.secondary" }}
                 >
-                  1
+                  {countedConsultants.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
+
           <Grid item xs={12} md={4}>
             <Card
               sx={{
@@ -133,12 +205,13 @@ const AdminContents = ({ isSidebarOpen }) => {
                   sx={{ color: "text.secondary" }}
                   mt={4}
                 >
-                  1
+                  {count.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
+
         <Grid item xs={12} md={4} mt={2}>
           <Card
             sx={{ maxWidth: 1460 }}

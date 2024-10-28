@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
+import PuffLoader from "../../../PuffLoader/PuffLoader";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -15,7 +16,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
-
+import { getAllConsultant, verifyadmin } from "../../../../Api/config";
+import axios from "axios";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -78,79 +80,15 @@ function TablePaginationActions(props) {
     </Box>
   );
 }
-function createData(
-  doctorName,
-  timeSlot,
-  date,
-  specialConcerns,
-  ownerName,
-  email,
-  status
-) {
-  return {
-    doctorName,
-    timeSlot,
-    date,
-    specialConcerns,
-    ownerName,
-    email,
-    status,
-  };
-}
-const rows = [
-  createData(
-    "Dr. Smith",
-    "9:00 AM",
-    "2024-10-01",
-    "Allergy",
-    "John Doe",
-    "john@example.com",
-    "Scheduled"
-  ),
-  createData(
-    "Dr. Jones",
-    "10:00 AM",
-    "2024-10-01",
-    "Checkup",
-    "Jane Doe",
-    "jane@example.com",
-    "Completed"
-  ),
-  createData(
-    "Dr. Brown",
-    "11:00 AM",
-    "2024-10-01",
-    "Flu",
-    "Alice",
-    "alice@example.com",
-    "Canceled"
-  ),
-  createData(
-    "Dr. Taylor",
-    "1:00 PM",
-    "2024-10-02",
-    "Headache",
-    "Bob",
-    "bob@example.com",
-    "Scheduled"
-  ),
-  createData(
-    "Dr. Williams",
-    "2:00 PM",
-    "2024-10-02",
-    "Dental Pain",
-    "Charlie",
-    "charlie@example.com",
-    "Scheduled"
-  ),
-].sort((a, b) => (a.date < b.date ? -1 : 1));
 
 const ConsultantTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [consultants, setConsultants] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - consultants.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -161,35 +99,79 @@ const ConsultantTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
+  const handleDelete = async (rowIndex) => {
+    const consultantToDelete = consultants[rowIndex];
+    try {
+      await axios.delete(`/consultants/${consultantToDelete._id}`);
+      setConsultants((prev) => prev.filter((_, index) => index !== rowIndex));
+      console.log("Deleted consultant:", consultantToDelete);
+    } catch (error) {
+      console.error("Error deleting consultant:", error);
+    }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
+    console.log("Update consultant at index:", rowIndex);
   };
+
+  useEffect(() => {
+    const fetchConsultants = async () => {
+      try {
+        const adminResponse = await verifyadmin();
+        console.log("Admin Response:", adminResponse);
+        if (!adminResponse) {
+          console.error("Admin ID not found failed.");
+          return;
+        }
+
+        const results = await getAllConsultant();
+        console.log("Consultant Results:", results);
+        if (results) {
+          setConsultants(results.retrievedData);
+        } else {
+          console.error("No consultants found in the results.");
+        }
+      } catch (err) {
+        console.error("Error fetching consultants:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 3000);
+      }
+    };
+
+    fetchConsultants();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <PuffLoader size={80} color="#123abc" loading={loading} />
+      </Box>
+    );
+  }
 
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row, index) => (
-            <TableRow key={row.doctorName}>
+            ? consultants.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : consultants
+          ).map((consultant, index) => (
+            <TableRow key={consultant._id}>
               <TableCell component="th" scope="row">
-                {row.doctorName}
+                {`DR. ${consultant.firstname} ${consultant.lastname}`}
               </TableCell>
-              <TableCell align="right">{row.timeSlot}</TableCell>
-              <TableCell align="right">{row.date}</TableCell>
-              <TableCell align="right">{row.specialConcerns}</TableCell>
-              <TableCell align="right">{row.ownerName}</TableCell>
-              <TableCell align="right">{row.email}</TableCell>
-              <TableCell align="right">{row.status}</TableCell>
+              <TableCell align="right">{consultant.speciality}</TableCell>
+              <TableCell align="right">{consultant.email}</TableCell>
+              <TableCell align="right">{consultant.telephoneNumber}</TableCell>
               <TableCell align="right">
                 <Button
                   variant="contained"
@@ -212,7 +194,7 @@ const ConsultantTable = () => {
 
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={8} />
+              <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
@@ -220,8 +202,8 @@ const ConsultantTable = () => {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={8}
-              count={rows.length}
+              colSpan={6}
+              count={consultants.length}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{

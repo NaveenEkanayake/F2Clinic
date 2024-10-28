@@ -6,11 +6,29 @@ const addInventoryItem = async(req, res) => {
     const adminId = req.id;
 
     try {
-        // Validate
         const admin = await AdminModel.findById(adminId);
         if (!admin) {
             return res.status(403).json({ message: "Access denied. Admins only." });
         }
+        const existingItemsCount = await InventoryModel.countDocuments({
+            ItemName,
+            adminId,
+        });
+
+        let existingItem = await InventoryModel.findOne({
+            ItemName,
+            Category,
+            adminId,
+        });
+
+        if (existingItem) {
+            existingItem.count += 1;
+            await existingItem.save();
+            return res.status(200).json({
+                item: existingItem,
+            });
+        }
+
         const newItem = new InventoryModel({
             ItemName,
             Category,
@@ -18,6 +36,7 @@ const addInventoryItem = async(req, res) => {
             imagepath,
             Description,
             adminId,
+            count: existingItemsCount + 1,
         });
 
         await newItem.save();
@@ -48,6 +67,30 @@ const getAllInventory = async(req, res) => {
         });
     } catch (error) {
         res.status(404).json({ message: error.message });
+    }
+};
+
+const getInventoryCount = async(req, res) => {
+    const adminId = req.id;
+
+    try {
+        const items = await InventoryModel.find({ adminId });
+
+        if (items.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "No inventory added for this admin." });
+        }
+
+        const totalCount = items.reduce((acc, item) => acc + item.count, 0);
+
+        return res.status(200).json({
+            message: "Total count retrieved successfully",
+            totalCount,
+        });
+    } catch (err) {
+        console.error("Get Item Count error:", err.message);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
@@ -131,4 +174,5 @@ module.exports = {
     getInventoryById,
     updateInventory,
     deleteInventory,
+    getInventoryCount,
 };

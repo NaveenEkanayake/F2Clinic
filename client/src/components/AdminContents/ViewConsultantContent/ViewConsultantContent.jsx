@@ -1,6 +1,6 @@
 import React from "react";
 import ConsultantTable from "../ViewConsultant/ConsultantTable/ConsultantTable";
-import Person from "../../../assets/images/person.png"; // Ensure the path is correct
+import Person from "../../../assets/images/person.png";
 
 const ViewConsultantContent = ({ isSidebarOpen }) => {
   return (
@@ -14,7 +14,7 @@ const ViewConsultantContent = ({ isSidebarOpen }) => {
           src={Person}
           alt="Consultant"
           className="w-8 h-8 mb-5 filter brightness-150 contrast-150 "
-        />{" "}
+        />
         <h1 className="text-slate-600 mb-7 font-semibold text-[26px]">
           View Consultants
         </h1>

@@ -1,16 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import InventorySVG from "../../InventorySVG/InventorySVG";
 import SubmitButton from "./SubmitButton/SubmitButton";
+import { addInventory } from "@/Api/config";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import app from "../../../Firebase/config";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const InventoryContent = () => {
   const [formData, setFormData] = useState({
-    itemName: "",
-    category: "",
-    quantity: "",
+    ItemName: "",
+    Category: "",
+    Quantity: "",
     imagepath: null,
-    description: "",
+    Description: "",
   });
+
+  const [imgUrl, setImgUrl] = useState(null);
+  const [img, setImg] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,20 +35,88 @@ const InventoryContent = () => {
   };
 
   const handleImageChange = (e) => {
-    setFormData({
-      ...formData,
-      imagepath: e.target.files[0],
-    });
+    setImg(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    if (img) {
+      uploadFile(img);
+    }
+  }, [img]);
+
+  const uploadFile = (file) => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, `Inventory/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error("Error during upload:", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImgUrl(downloadURL);
+          localStorage.setItem("imgUrl", downloadURL);
+          setFormData((prevData) => ({
+            ...prevData,
+            imagepath: downloadURL,
+          }));
+
+          handleSubmit();
+        });
+      }
+    );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You can add logic to handle form submission here (e.g., API calls, form validation)
-    console.log(formData);
+    if (!formData.imagepath) {
+      toast.error("Image upload is in progress. Please wait.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    setLoading(true);
+    const inventoryData = {
+      ItemName: formData.ItemName,
+      Category: formData.Category,
+      Quantity: Number(formData.Quantity),
+      imagepath: formData.imagepath,
+      Description: formData.Description,
+    };
+
+    addInventory(inventoryData)
+      .then((response) => {
+        console.log("Inventory added successfully:", response);
+        toast.success("Inventory added successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error("Error adding inventory:", error);
+        toast.error("Error adding inventory.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
     <div className="w-full min-h-screen flex ml-10 items-center justify-center">
+      <ToastContainer />
       <div className="flex w-full max-w-5xl">
         <InventorySVG />
         <motion.div
@@ -64,8 +146,8 @@ const InventoryContent = () => {
               <label className="text-white font-semibold">Item Name</label>
               <input
                 type="text"
-                name="itemName"
-                value={formData.itemName}
+                name="ItemName"
+                value={formData.ItemName}
                 onChange={handleInputChange}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter the item name"
@@ -77,8 +159,8 @@ const InventoryContent = () => {
               <label className="text-white font-semibold">Category</label>
               <input
                 type="text"
-                name="category"
-                value={formData.category}
+                name="Category"
+                value={formData.Category}
                 onChange={handleInputChange}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter the category"
@@ -90,8 +172,8 @@ const InventoryContent = () => {
               <label className="text-white font-semibold">Quantity</label>
               <input
                 type="number"
-                name="quantity"
-                value={formData.quantity}
+                name="Quantity"
+                value={formData.Quantity}
                 onChange={handleInputChange}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter the quantity"
@@ -108,21 +190,22 @@ const InventoryContent = () => {
                 accept="image/*"
                 onChange={handleImageChange}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
+                required
               />
             </div>
 
             <div className="w-full relative">
               <label className="text-white font-semibold">Description</label>
               <textarea
-                name="description"
-                value={formData.description}
+                name="Description"
+                value={formData.Description}
                 onChange={handleInputChange}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter a description"
                 rows="4"
               />
             </div>
-            <SubmitButton>Submit</SubmitButton>
+            <SubmitButton loading={loading}>Submit</SubmitButton>
           </form>
         </motion.div>
       </div>

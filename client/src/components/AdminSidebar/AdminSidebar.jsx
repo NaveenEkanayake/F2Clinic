@@ -1,25 +1,128 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebararrow from "../../assets/images/Sidebararrow.png";
 import logo from "../../assets/images/logo.png";
 import Avatar from "../../assets/images/avatar.png";
 import ConsultantIcon from "../../assets/images/consultant.png";
-import Logout from "../../assets/images/Logout.webp";
 import Setting from "../../assets/images/settings.jpg";
 import Notification from "../../assets/images/Notification.png";
 import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkModeButton/DarkModeButton";
 import InventoryIcon from "../../assets/images/Inventory.png";
+import app from "../Firebase/config";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import axios from "axios";
+import { verifyadmin, uploadAdminImage, getAdminIMG } from "../../Api/config";
+import LogoutButton from "./AdminLogoutButton/LogoutButton";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdminSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [notificationsCount] = useState(1);
+  const [AdminUrl, setAdminUrl] = useState(
+    localStorage.getItem("AdminUrl") || Avatar
+  );
+  const [img, setImg] = useState(null);
+  const fileInputRef = useRef(null);
+  const [adminId, setAdminId] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = (setter) => () => setter((prev) => !prev);
+
+  useEffect(() => {
+    const verifyAdmin = async () => {
+      try {
+        const response = await verifyadmin();
+        if (response && response.admin) {
+          setAdminData(response.admin);
+          setAdminId(response.admin._id);
+        }
+      } catch (error) {
+        console.error("Error verifying admin:", error);
+      }
+    };
+
+    verifyAdmin();
+    fetchImageUrl();
+  }, []);
+
+  useEffect(() => {
+    if (img) {
+      uploadFile(img);
+    }
+  }, [img]);
+
+  const uploadFile = (file) => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, `adminprofile/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error("Error during upload:", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setAdminUrl(downloadURL);
+          localStorage.setItem("AdminUrl", downloadURL);
+          handleSubmit(downloadURL);
+        });
+      }
+    );
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImg(file);
+    }
+  };
+
+  const fetchImageUrl = async () => {
+    try {
+      const response = await getAdminIMG();
+      console.log("Fetched image URL:", response);
+
+      if (response && response.AdminUrl) {
+        setImageUrl(response.AdminUrl);
+      } else {
+        console.warn("No AdminUrl found in response:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching image URL:", error);
+    }
+  };
+
+  const handleSubmit = async (downloadURL) => {
+    try {
+      const response = await uploadAdminImage({ AdminUrl: downloadURL });
+      console.log("Image upload response:", response);
+      if (response && response.createdData) {
+        console.log("Uploaded image data:", response.createdData);
+        fetchImageUrl();
+      } else {
+        console.warn("Unexpected response structure:", response);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   return (
     <div
@@ -49,18 +152,50 @@ const AdminSidebar = ({ open, setOpen }) => {
           </span>
         )}
       </Link>
-      <div className="flex flex-col items-center mt-8">
-        <img
-          src={Avatar}
-          className={`rounded-full cursor-pointer ${
-            open ? "w-24 h-24" : "w-10 h-10"
-          }`}
-        />
-        {open && (
-          <p className="text-white hover:text-blue-500 mt-2 cursor-pointer">
-            Add a Profile Pic
-          </p>
-        )}
+      <div className="flex flex-col items-center mt-8 ">
+        <div
+          className="relative"
+          onMouseEnter={() => setDialogVisible(true)}
+          onMouseLeave={() => setDialogVisible(false)}
+        >
+          <img
+            src={AdminUrl}
+            alt="Profile Avatar"
+            className={`rounded-full cursor-pointer ml-3 ${
+              open ? "w-24 h-24" : "w-10 h-10"
+            }`}
+            onClick={() => setOpen(!open)}
+          />
+          {open && (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                className="text-white hover:text-blue-500 mt-2 cursor-pointer"
+                onClick={() => fileInputRef.current.click()}
+                aria-label="Upload a profile picture"
+              >
+                Add a Profile Pic
+              </button>
+            </>
+          )}
+          {dialogVisible && (
+            <div className="absolute top-0 left-[120px] w-32  mt-2 mr-2 p-2 bg-white border rounded shadow-lg z-10 cursor-pointer">
+              <h2 className="text-sm font-semibold">
+                Welcome, {adminData.fullname}
+              </h2>
+              <p className="text-xs mt-1">{adminData.email}</p>
+            </div>
+          )}
+        </div>
+
+        <ToastContainer />
       </div>
       <ul className="pt-8 space-y-2">
         <Link
@@ -178,7 +313,10 @@ const AdminSidebar = ({ open, setOpen }) => {
         </Link>
         <div className="relative">
           <Link
-            onClick={toggleDropdown(() => setDropdownOpen((prev) => !prev))}
+            onClick={(e) => {
+              e.preventDefault(); // Prevents navigation
+              setDropdownOpen((prev) => !prev); // Toggles dropdown state
+            }}
             className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
               !open ? "justify-center" : ""
             }`}
@@ -193,17 +331,10 @@ const AdminSidebar = ({ open, setOpen }) => {
           )}
         </div>
       </ul>
-      <Link
-        to="/logout"
-        className={`flex items-center py-4 px-4 ${
-          open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
-        } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${
-          !open ? "justify-center" : ""
-        }`}
-      >
-        <img src={Logout} className="h-6 w-6 mr-2 invert brightness-110" />
-        {open && <span>Logout</span>}
-      </Link>
+      <div className="mt-20">
+        <LogoutButton open={open} />
+      </div>
+      <ToastContainer />
       <div className="mt-auto text-white">
         {open && (
           <p className="text-sm text-center">

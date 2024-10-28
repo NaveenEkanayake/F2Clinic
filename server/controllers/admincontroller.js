@@ -15,19 +15,20 @@ const Signup = async(req, res) => {
             .json({ message: "Please provide email and password." });
     }
     try {
-        const exisitingAdmin = await Admin.findOne({ email });
-        if (exisitingAdmin) {
+        const existingAdmin = await Admin.findOne({ email });
+        if (existingAdmin) {
             return res.status(400).json({
                 message: "Admin already exists with this email.",
-                user: exisitingAdmin,
+                user: existingAdmin,
             });
         }
 
-        const hashedpassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const admin = new Admin({
             fullname,
             email,
-            password: hashedpassword,
+            password: hashedPassword,
+            role: "admin",
         });
         await admin.save();
         return res.status(201).json({
@@ -39,8 +40,7 @@ const Signup = async(req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 };
-
-const LoginUser = async(req, res) => {
+const LoginAdmin = async(req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -79,7 +79,12 @@ const LoginUser = async(req, res) => {
 
         return res.status(200).json({
             message: "Login successful!",
-            admin: existingAdmin,
+            admin: {
+                _id: existingAdmin._id,
+                fullname: existingAdmin.fullname,
+                email: existingAdmin.email,
+                role: existingAdmin.role,
+            },
             token,
         });
     } catch (err) {
@@ -93,9 +98,11 @@ const verifyAdminToken = (req, res, next) => {
     if (!cookies) {
         return res.status(404).json({ message: "No cookies found" });
     }
+
     const token = cookies
         .split(";")
         .find((cookie) => cookie.trim().startsWith("token="));
+
     if (!token) {
         return res.status(404).json({ message: "No Token Found" });
     }
@@ -108,13 +115,14 @@ const verifyAdminToken = (req, res, next) => {
     try {
         const decodedUser = jwt.verify(actualToken, JWT_SECRET_KEY);
         req.id = decodedUser.id;
+        req.role = decodedUser.role;
         next();
     } catch (err) {
         console.error("Token verification error:", err.message);
         return res.status(400).json({ message: "Invalid Token" });
     }
 };
-// Get Admin by Token
+
 const getAdmin = async(req, res) => {
     const adminId = req.id;
     try {
@@ -147,29 +155,28 @@ const refreshToken = (req, res, next) => {
     if (!tokenValue) {
         return res.status(400).json({ message: "Token value missing" });
     }
+
     jwt.verify(tokenValue, JWT_SECRET_KEY, (err, admin) => {
         if (err) {
             console.log(err);
             return res.status(403).json({ message: "Authentication failed" });
         }
-
-        // Generating a new token for the admin
-        const token = jwt.sign({ id: admin.id }, JWT_SECRET_KEY, {
-            expiresIn: "2h", // Token expiry in 2 hours
+        const token = jwt.sign({ id: admin.id, role: admin.role }, JWT_SECRET_KEY, {
+            expiresIn: "2h",
         });
-        res.clearCookie("token"); // Clear the old token
+        res.clearCookie("token");
         res.cookie("token", token, {
             path: "/",
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2-hour expiry
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
             httpOnly: true,
             sameSite: "lax",
         });
 
         req.id = admin.id;
-        next(); // Move to the next middleware
+        req.role = admin.role;
+        next();
     });
 };
-
 const adminLogout = (req, res) => {
     const cookies = req.cookies;
     if (!cookies || !cookies.token) {
@@ -190,7 +197,7 @@ const adminLogout = (req, res) => {
 
 module.exports = {
     Signup,
-    LoginUser,
+    LoginAdmin,
     verifyAdminToken,
     getAdmin,
     refreshToken,

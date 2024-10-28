@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "../../assets/images/logo.png";
 import DropdownHome from "../DropdownHome/DropdownHome";
 import { Link } from "react-scroll";
@@ -93,9 +93,7 @@ const HomePageNav = () => {
                   <span className="absolute left-1/2 top-[30px] transform -translate-x-1/2 h-0.5 w-0 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               </li>
-              <li>
-                <DropdownHome />
-              </li>
+              <DropdownHome />
             </ul>
           </div>
         </div>

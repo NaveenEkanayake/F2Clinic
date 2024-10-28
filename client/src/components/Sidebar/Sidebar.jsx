@@ -37,7 +37,12 @@ const Sidebar = () => {
         </h1>
       </div>
       <ul className="pt-8">
-        <SidebarLink to="" imgSrc={User} text="Admin Login" open={open} />
+        <SidebarLink
+          to="/adminlogin"
+          imgSrc={User}
+          text="Admin Login"
+          open={open}
+        />
         <SidebarLink
           to="/customerlogin"
           imgSrc={User}

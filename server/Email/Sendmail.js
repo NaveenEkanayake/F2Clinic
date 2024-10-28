@@ -2,27 +2,27 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
 async function sendMail(
-  to,
-  subject,
-  consultantName,
-  specialty,
-  generatedPassword
+    to,
+    subject,
+    consultantName,
+    specialty,
+    generatedPassword
 ) {
-  // Define the email options
-  const mailOptions = {
-    from: '"Furry Pet Clinic" <furrrypetclinic@gmail.com>', // Sender address
-    to: to, // Recipient address
-    subject: subject, // Subject of the email
-    html: `
+    // Define the email options
+    const mailOptions = {
+        from: '"Furry Pet Clinic" <furrrypetclinic@gmail.com>', // Sender address
+        to: to, // Recipient address
+        subject: subject, // Subject of the email
+        html: `
     <div style="font-family: 'Google Sans', 'Noto Naskh Arabic UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #ffffff;">
       <h2 style="color: #000; text-align: center;"><em>Furry Pet Clinic</em></h2>
       <p style="color: #000; font-size: 16px;">
@@ -46,15 +46,15 @@ async function sendMail(
       </p>
     </div>
     `,
-  };
+    };
 
-  try {
-    // Attempt to send the email
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Message sent:", info.messageId); // Log the message ID if successful
-  } catch (error) {
-    console.error("Error occurred:", error); // Log the error if something goes wrong
-  }
+    try {
+        // Attempt to send the email
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Message sent:", info.messageId); // Log the message ID if successful
+    } catch (error) {
+        console.error("Error occurred:", error); // Log the error if something goes wrong
+    }
 }
 
 module.exports = { sendMail };

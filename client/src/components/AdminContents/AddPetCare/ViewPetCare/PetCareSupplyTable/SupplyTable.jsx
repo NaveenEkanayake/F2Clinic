@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -15,6 +15,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
+import PuffLoader from "@/components/PuffLoader/PuffLoader";
+import { getAllPetcareSupply, verifyadmin } from "../../../../../Api/config";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -78,25 +80,11 @@ function TablePaginationActions(props) {
   );
 }
 
-function createData(name, image, description) {
-  return {
-    name,
-    image,
-    description,
-  };
-}
-
-const rows = [
-  createData("Pet Food", "image_url_1", "High-quality dry dog food"),
-  createData("Pet Shampoo", "image_url_2", "Gentle shampoo for sensitive skin"),
-  createData("Dog Collar", "image_url_3", "Durable and adjustable collar"),
-  createData("Cat Litter", "image_url_4", "Odor-control clumping cat litter"),
-  createData("Dog Leash", "image_url_5", "Reflective leash for safety"),
-].sort((a, b) => (a.name < b.name ? -1 : 1));
-
 const SupplyTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -118,29 +106,71 @@ const SupplyTable = () => {
     console.log("Update row", rowIndex);
   };
 
+  useEffect(() => {
+    const fetchPetcareSupply = async () => {
+      try {
+        const adminResponse = await verifyadmin();
+        console.log("Admin Response:", adminResponse);
+        if (!adminResponse) {
+          console.error("Admin ID not found failed.");
+          return;
+        }
+
+        const results = await getAllPetcareSupply();
+        console.log("PetCare Results:", results);
+
+        if (results && results.retrievedData) {
+          const formattedRows = results.retrievedData.map((CareSupply) => ({
+            SupplyImg: CareSupply.SupplyImg,
+            Supplyname: CareSupply.Supplyname,
+            SupplyDescription: CareSupply.SupplyDescription,
+          }));
+          setRows(formattedRows);
+        } else {
+          console.error("No Pet Care Supply found in the results.");
+        }
+      } catch (err) {
+        console.error("Error fetching Pet Care Supply:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 3000);
+      }
+    };
+
+    fetchPetcareSupply();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen">
+        <PuffLoader />
+      </div>
+    );
+  }
+
+  if (rows.length === 0) {
+    return <div>No Pet Care Supply found.</div>;
+  }
+
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row, index) => (
-            <TableRow key={row.name}>
+            <TableRow key={index}>
               <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="center">
                 <img
-                  src={row.image}
-                  alt={row.name}
+                  src={row.SupplyImg}
+                  alt={row.Supplyname}
                   style={{ width: 50, height: 50 }}
                 />
               </TableCell>
-              <TableCell align="left">{row.description}</TableCell>
+              <TableCell component="th" scope="row">
+                {row.Supplyname}
+              </TableCell>
+              <TableCell align="right">{row.SupplyDescription}</TableCell>
               <TableCell align="right">
                 <Button
                   variant="contained"
@@ -160,10 +190,9 @@ const SupplyTable = () => {
               </TableCell>
             </TableRow>
           ))}
-
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={4} />
+              <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
@@ -171,7 +200,7 @@ const SupplyTable = () => {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={4}
+              colSpan={6}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

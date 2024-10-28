@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -15,6 +15,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
+import PuffLoader from "@/components/PuffLoader/PuffLoader";
+import { getAllInventories, verifyadmin } from "../../../../Api/config";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -78,33 +80,11 @@ function TablePaginationActions(props) {
   );
 }
 
-function createData(itemName, category, quantity, description, image) {
-  return { itemName, category, quantity, description, image };
-}
-
-const rows = [
-  createData(
-    "Laptop",
-    "Electronics",
-    10,
-    "A high-end gaming laptop",
-    "image1.png"
-  ),
-  createData("Chair", "Furniture", 5, "Comfortable office chair", "image2.png"),
-  createData("Notebook", "Stationery", 50, "A5 lined notebook", "image3.png"),
-  createData(
-    "Headphones",
-    "Electronics",
-    20,
-    "Noise-cancelling headphones",
-    "image4.png"
-  ),
-  createData("Mug", "Kitchenware", 30, "Ceramic coffee mug", "image5.png"),
-].sort((a, b) => (a.itemName < b.itemName ? -1 : 1));
-
 const ViewInventoryTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -126,25 +106,74 @@ const ViewInventoryTable = () => {
     console.log("Update row", rowIndex);
   };
 
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const adminResponse = await verifyadmin();
+        console.log("Admin Response:", adminResponse);
+        if (!adminResponse) {
+          console.error("Admin ID not found failed.");
+          return;
+        }
+
+        const results = await getAllInventories();
+        console.log("Inventory Results:", results);
+        if (results && results.retrieveditems) {
+          const formattedRows = results.retrieveditems.map((item) => ({
+            imagepath: item.imagepath,
+            itemName: item.ItemName,
+            Category: item.Category,
+            Quantity: item.Quantity,
+            Description: item.Description,
+          }));
+          setRows(formattedRows);
+        } else {
+          console.error("No Inventory found in the results.");
+        }
+      } catch (err) {
+        console.error("Error fetching Inventory:", err);
+      } finally {
+        setTimeout(() => setLoading(false), 3000);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen">
+        <PuffLoader />
+      </div>
+    );
+  }
+
+  if (rows.length === 0) {
+    return <div>No inventory found.</div>;
+  }
+
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row, index) => (
-            <TableRow key={row.itemName}>
+            <TableRow key={row.id}>
+              <TableCell component="th" scope="row">
+                <img
+                  src={row.imagepath}
+                  alt={row.itemName}
+                  style={{ width: 50, height: 50 }}
+                />
+              </TableCell>
               <TableCell component="th" scope="row">
                 {row.itemName}
               </TableCell>
-              <TableCell align="right">{row.category}</TableCell>
-              <TableCell align="right">{row.quantity}</TableCell>
-              <TableCell align="right">{row.description}</TableCell>
-              <TableCell align="right">{row.image}</TableCell>
+              <TableCell align="right">{row.Category}</TableCell>
+              <TableCell align="right">{row.Quantity}</TableCell>
+              <TableCell align="right">{row.Description}</TableCell>
               <TableCell align="right">
                 <Button
                   variant="contained"
@@ -167,7 +196,7 @@ const ViewInventoryTable = () => {
 
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={8} />
+              <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
@@ -175,7 +204,7 @@ const ViewInventoryTable = () => {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={8}
+              colSpan={6}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

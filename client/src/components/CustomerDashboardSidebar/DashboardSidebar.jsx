@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Sidebararrow from "../../assets/images/Sidebararrow.png";
 import logo from "../../assets/images/logo.png";
@@ -12,19 +12,134 @@ import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkmodeButton/DarkModeButton";
 import ContactUs from "../../assets/images/ContactUs.png";
+import axios from "axios";
+import app from "../Firebase/config";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { verifyCustomer } from "../../Api/config";
 
 const DashboardSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(1);
+  const [img, setImg] = useState(null);
+  const [inputs, setInputs] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [imgUrl, setImgUrl] = useState(
+    localStorage.getItem("imgUrl") || Avatar
+  );
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const toggleAppointmentDropdown = () =>
     setIsAppointmentOpen(!isAppointmentOpen);
   const togglePetRecordsDropdown = () => setIsPetRecordsOpen(!isPetRecordsOpen);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
+  const verifyUser = async () => {
+    try {
+      const response = await verifyCustomer();
+      if (response && response.user) {
+        setUserId(response.user._id);
+      } else {
+        console.error("User data not found in response:", response);
+      }
+    } catch (error) {
+      console.error("Error verifying user:", error);
+    }
+  };
+
+  useEffect(() => {
+    verifyUser();
+  }, []);
+
+  useEffect(() => {
+    if (img) {
+      uploadFile(img);
+    }
+  }, [img]);
+
+  const uploadFile = (file) => {
+    const storage = getStorage(app);
+    const storageRef = ref(storage, `images/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error("Error during upload:", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImgUrl(downloadURL);
+          localStorage.setItem("imgUrl", downloadURL);
+          setInputs((prev) => ({ ...prev, imgurl: downloadURL }));
+          handleSubmit();
+        });
+      }
+    );
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImg(file);
+    }
+  };
+
+  useEffect(() => {
+    const storedImgUrl = localStorage.getItem("imgUrl");
+    if (storedImgUrl) {
+      setImgUrl(storedImgUrl);
+    } else {
+      fetchImageUrl();
+    }
+  }, []);
+
+  const fetchImageUrl = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/getimg");
+      const fetchedImgUrl = response.data.IMGurl || Avatar;
+      if (fetchedImgUrl && fetchedImgUrl !== "null") {
+        setImgUrl(fetchedImgUrl);
+        localStorage.setItem("imgUrl", fetchedImgUrl);
+      } else {
+        // If not valid, set to the default avatar
+        setImgUrl(Avatar);
+        localStorage.setItem("imgUrl", Avatar);
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      setImgUrl(Avatar);
+      localStorage.setItem("imgUrl", Avatar);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/addimg", {
+        IMGurl: imgUrl,
+      });
+      console.log("Image uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      if (error.response) {
+        console.error("Error message:", error.response.data);
+      }
+    }
   };
 
   return (
@@ -60,15 +175,30 @@ const DashboardSidebar = ({ open, setOpen }) => {
       </Link>
       <div className="flex flex-col items-center mt-8">
         <img
-          src={Avatar}
+          src={imgUrl}
           className={`rounded-full cursor-pointer ${
             open ? "w-24 h-24" : "w-10 h-10"
           }`}
+          onClick={() => setOpen(!open)}
+          alt="Avatar"
         />
         {open && (
-          <p className="text-white hover:text-blue-500 mt-2 cursor-pointer">
-            Add a Profile Pic
-          </p>
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              className="text-white hover:text-blue-500 mt-2 cursor-pointer"
+              onClick={() => fileInputRef.current.click()}
+            >
+              Add a Profile Pic
+            </button>
+          </>
         )}
       </div>
       <ul className="pt-8 space-y-2">

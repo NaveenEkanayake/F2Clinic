@@ -3,7 +3,6 @@ import AdminSidebar from "@/components/AdminSidebar/AdminSidebar";
 import AddConsultantcontent from "../AddConsultantcontent/AddConsultantcontent";
 
 const AddConsultantForm = () => {
-  // Add state for controlling the sidebar's open/close state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (

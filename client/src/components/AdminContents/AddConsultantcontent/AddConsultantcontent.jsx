@@ -2,14 +2,57 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ConsultantSvg from "./Consultantsvg/ConsultantSvg";
 import SubmitButton from "./ConsultantSubmitButton/SubmitButton";
+import { addConsultant, verifyadmin } from "@/Api/config";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-const AppointmentContents = () => {
-  const handleSubmit = (e) => {
+const ConsultantContents = () => {
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    speciality: "",
+    email: "",
+    telephoneNumber: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { adminId } = await verifyadmin();
+
+      const { firstname, lastname, speciality, email, telephoneNumber } =
+        formData;
+
+      await addConsultant({
+        firstname,
+        lastname,
+        speciality,
+        email,
+        telephoneNumber,
+        adminId,
+      });
+
+      toast.success("Consultant added successfully!");
+      setTimeout(() => {
+        navigate("/admindashboard");
+      }, 3000);
+    } catch (error) {
+      toast.error(error.message || "An error occurred. Please try again.");
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
+      <ToastContainer />
       <div className="flex w-full max-w-5xl">
         <ConsultantSvg />
         <motion.div
@@ -32,13 +75,20 @@ const AppointmentContents = () => {
             </p>
           </div>
 
-          <form className="w-full h-auto flex flex-col items-center gap-7 px-10">
+          <form
+            onSubmit={handleSubmit}
+            className="w-full h-auto flex flex-col items-center gap-7 px-10"
+          >
             <div className="w-full relative">
               <label className="text-white font-semibold">First Name</label>
               <input
                 type="text"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 required
+                value={formData.firstname}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstname: e.target.value })
+                }
               />
             </div>
 
@@ -48,6 +98,10 @@ const AppointmentContents = () => {
                 type="text"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 required
+                value={formData.lastname}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastname: e.target.value })
+                }
               />
             </div>
 
@@ -57,6 +111,10 @@ const AppointmentContents = () => {
                 type="text"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 required
+                value={formData.speciality}
+                onChange={(e) =>
+                  setFormData({ ...formData, speciality: e.target.value })
+                }
               />
             </div>
 
@@ -66,6 +124,10 @@ const AppointmentContents = () => {
                 type="email"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 required
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
 
@@ -77,9 +139,14 @@ const AppointmentContents = () => {
                 type="text"
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 maxLength="10"
+                required
+                value={formData.telephoneNumber}
+                onChange={(e) =>
+                  setFormData({ ...formData, telephoneNumber: e.target.value })
+                }
               />
             </div>
-            <SubmitButton>Submit</SubmitButton>
+            <SubmitButton loading={loading}>Submit</SubmitButton>
           </form>
         </motion.div>
       </div>
@@ -87,4 +154,4 @@ const AppointmentContents = () => {
   );
 };
 
-export default AppointmentContents;
+export default ConsultantContents;

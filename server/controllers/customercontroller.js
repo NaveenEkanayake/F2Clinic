@@ -15,29 +15,54 @@ const Signup = async(req, res) => {
             .status(400)
             .json({ message: "Please provide email and password." });
     }
+
     try {
-        const exisitingUser = await User.findOne({ email });
-        if (exisitingUser) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.status(400).json({
                 message: "User already exists with this email.",
-                user: exisitingUser,
+                user: existingUser,
             });
         }
-
-        const hashedpassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({
             fullname,
             email,
-            password: hashedpassword,
+            password: hashedPassword,
         });
+
         await user.save();
+        await User.updateOne({}, { $inc: { count: 1 } });
+        const customerCount = await User.countDocuments();
+
         return res.status(201).json({
             message: "User created successfully!",
             user,
+            countedCustomer: customerCount,
         });
     } catch (err) {
         console.error("Signup error:", err.message);
         return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+const getCustomerCount = async(req, res) => {
+    try {
+        const allRegisteredCustomers = await User.find({});
+        const customerCount = allRegisteredCustomers.length;
+
+        if (customerCount === 0) {
+            return res
+                .status(400)
+                .json({ message: "No registered customers found!" });
+        }
+
+        res.status(200).json({
+            message: "Registered customers retrieved successfully!",
+            customers: customerCount,
+        });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
 };
 
@@ -191,5 +216,6 @@ module.exports = {
     verifyUserToken,
     getUser,
     refreshToken,
+    getCustomerCount,
     logout,
 };
