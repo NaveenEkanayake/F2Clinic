@@ -22,7 +22,6 @@ import {
   verifyadmin,
   deleteConsultant,
 } from "../../../../Api/config";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function TablePaginationActions(props) {
@@ -109,22 +108,16 @@ const ConsultantTable = () => {
   const handleDelete = async (rowIndex) => {
     const consultantToDelete = consultants[rowIndex];
     try {
-      // Call the deleteConsultant function
-      await deleteConsultant(consultantToDelete._id); // Pass the consultant ID directly
-      // Update state to remove the deleted consultant from the list
+      await deleteConsultant(consultantToDelete._id);
       setConsultants((prev) => prev.filter((_, index) => index !== rowIndex));
       console.log("Deleted consultant:", consultantToDelete);
-
-      // Success toast message
       toast.success("Consultant deleted successfully!", {
-        autoClose: 3000, // Toast will close after 3 seconds
+        autoClose: 3000,
       });
     } catch (error) {
       console.error("Error deleting consultant:", error);
-
-      // Error toast message
       toast.error("Failed to delete consultant. Please try again.", {
-        autoClose: 3000, // Toast will close after 3 seconds
+        autoClose: 3000,
       });
     }
   };

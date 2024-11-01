@@ -350,7 +350,7 @@ const AdminSidebar = ({ open, setOpen }) => {
           )}
         </div>
       </ul>
-      <div className="mt-20">
+      <div className={`mt-20 ${!open}`}>
         <LogoutButton open={open} />
       </div>
       <ToastContainer />

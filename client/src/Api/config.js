@@ -382,3 +382,113 @@ export const getConsultantById = async(id) => {
         throw error;
     }
 };
+
+export const updateInventory = async(id, data) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/updateInventory/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating Inventory:", error);
+        throw error;
+    }
+};
+
+export const deleteInventory = async(id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/deleteInventory/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting Inventory:", error);
+        throw error;
+    }
+};
+
+export const getInventoryById = async(id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getInventoryByID/${id}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Inventory by ID:", error);
+        throw error;
+    }
+};
+
+export const getPetcareSupplyById = async(id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllpetcaresupply/${id}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching PetcareSupply by ID:", error);
+        throw error;
+    }
+};
+
+export const updatePetcareSupply = async(id, data) => {
+    try {
+        const response = await axios.put(
+            `${BASE_URL}/updatepetcaresupply/${id}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error updating PetCareSupply:", error);
+        throw error;
+    }
+};
+
+export const deletepetcaresupply = async(id) => {
+    try {
+        const response = await axios.delete(
+            `${BASE_URL}/deletepetcaresupply/${id}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting Pet Care Supply:", error);
+        throw error;
+    }
+};
+
+export const getAllCustomerAndConsultantEmails = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllEmails`, {
+            withCredentials: true,
+        });
+        console.log("API Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Consultant or Customer Emails:", error);
+        throw error;
+    }
+};
+
+export const SendCustomerNotification = async(data) => {
+    try {
+        const SendNotification = await axios.post(
+            `${BASE_URL}/SendnotificationCustomer`,
+            data, {
+                withCredentials: true,
+            }
+        );
+        return SendNotification.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const SendConsultantNotification = async(data) => {
+    try {
+        const SendNotification = await axios.post(
+            `${BASE_URL}/SendnotificationConsultant`,
+            data, {
+                withCredentials: true,
+            }
+        );
+        return SendNotification.data;
+    } catch (error) {
+        console.log(error);
+    }
+};

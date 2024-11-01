@@ -2,24 +2,14 @@ const Notification = require("../models/notification");
 const Customer = require("../models/Customer");
 const Consultant = require("../models/consultant");
 
-const getCustomerEmailsAndRoles = async(req, res) => {
+const getAllEmails = async(req, res) => {
     try {
         const customers = await Customer.find({}, "email role");
         const formattedCustomers = customers.map((customer) => ({
             email: customer.email,
             role: customer.role,
         }));
-        res.status(200).json({
-            message: "All customer emails retrieved successfully",
-            formattedCustomers,
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
 
-const getConsultantEmails = async(req, res) => {
-    try {
         const consultants = await Consultant.find({}, "email");
         const formattedConsultants = consultants.map((consultant) => ({
             email: consultant.email,
@@ -27,10 +17,12 @@ const getConsultantEmails = async(req, res) => {
         }));
 
         res.status(200).json({
-            message: "All Consultant Emails Successfully Retrived",
+            message: "All customer and consultant emails retrieved successfully",
+            formattedCustomers,
             formattedConsultants,
         });
     } catch (error) {
+        console.error("Error retrieving emails:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -134,8 +126,7 @@ const updateNotification = async(req, res) => {
 };
 
 module.exports = {
-    getCustomerEmailsAndRoles,
-    getConsultantEmails,
+    getAllEmails,
     sendNotificationToCustomer,
     sendNotificationToConsultant,
     getNotificationsByEmail,

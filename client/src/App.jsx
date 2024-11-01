@@ -27,6 +27,9 @@ import ConsultantPetRecord from "./components/AdminPetRecords/ConsultantPetRecor
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
 import ConsultantLogin from "./pages/ConsultantLogin/ConsultantLogin";
 import UpdateConsultantForm from "./components/UpdateConsultantForm/UpdateConsultantForm";
+import UpdateInventoryForm from "./components/UpdateInventoryForm/UpdateInventoryForm";
+import UpdatePetCareForm from "./components/UpdatePetCareSupply/UpdatePetCareForm";
+import CreateNotificationForm from "./components/AdminCreateNotification/CreateNotificationForm";
 
 const withLoading = (Component) => {
   return function WithLoadingComponent(props) {
@@ -74,6 +77,9 @@ function App() {
   const LoadingConsultantLogin = withLoading(ConsultantLogin);
   const LoadingConsultantDashboard = withLoading(ConsultantDashboard);
   const LoadingConsultantPetRecord = withLoading(ConsultantPetRecord);
+  const LoadingUpdateInventoryForm = withLoading(UpdateInventoryForm);
+  const LoadingUpdatePetcareForm = withLoading(UpdatePetCareForm);
+  const LoadingCreateNotificationForm = withLoading(CreateNotificationForm);
 
   return (
     <Routes>
@@ -104,8 +110,20 @@ function App() {
         element={<LoadingUpdateConsultantForm />}
       />
       <Route
+        path="/updateInventory/:id"
+        element={<LoadingUpdateInventoryForm />}
+      />
+      <Route
+        path="/updatePetcareSupply/:id"
+        element={<LoadingUpdatePetcareForm />}
+      />
+      <Route
         path="/Consultantdashboard"
         element={<LoadingConsultantDashboard />}
+      />
+      <Route
+        path="/createmessage"
+        element={<LoadingCreateNotificationForm />}
       />
       <Route
         path="/ConsultantpetRecord"

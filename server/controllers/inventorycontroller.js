@@ -120,6 +120,7 @@ const getInventoryById = async(req, res) => {
 const updateInventory = async(req, res) => {
     const { id } = req.params;
     const updateData = req.body;
+    delete updateData.imagepath;
 
     try {
         const admin = await AdminModel.findById(req.id);
@@ -133,7 +134,7 @@ const updateInventory = async(req, res) => {
         );
 
         if (!updatedInventory) {
-            return res.status(404).json({ message: "No Inventory items exists!" });
+            return res.status(404).json({ message: "No Inventory items exist!" });
         }
 
         res.status(200).json({

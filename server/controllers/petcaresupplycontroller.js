@@ -72,19 +72,22 @@ const getPetCareSupplyById = async(req, res) => {
 const updatePetCareSuppply = async(req, res) => {
     const { id } = req.params;
     const updateData = req.body;
+    delete updateData.SupplyImg;
+
     const adminId = req.id;
 
     try {
         if (!adminId) {
             return res.status(403).json({ message: "Access denied. Admins only." });
         }
+
         const updatedPetCare = await PetcaresupplyModel.findByIdAndUpdate(
             id,
             updateData, { new: true }
         );
 
         if (!updatedPetCare) {
-            return res.status(404).json({ message: "No Pet care  items exists!" });
+            return res.status(404).json({ message: "No Pet care items exist!" });
         }
 
         res.status(200).json({

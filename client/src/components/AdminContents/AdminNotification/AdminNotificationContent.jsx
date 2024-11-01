@@ -15,12 +15,21 @@ const AdminNotificationContent = ({ isSidebarOpen }) => {
     socketRef.current.on("connect", () => {
       console.log("Connected to socket with ID:", socketRef.current.id);
     });
+
     socketRef.current.on("addConsultantNotification", (data) => {
-      console.log("Notification received:", data);
+      console.log("Consultant Notification received:", data);
       if (data && data.message) {
         setNotifications((prev) => [...prev, data.message]);
       }
     });
+
+    socketRef.current.on("adminMessage", (data) => {
+      console.log("Admin Notification received:", data);
+      if (data && data.message) {
+        setNotifications((prev) => [...prev, data.message]);
+      }
+    });
+
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
@@ -47,26 +56,30 @@ const AdminNotificationContent = ({ isSidebarOpen }) => {
   };
 
   return (
-    <>
-      <div className="flex justify-end items-center">
-        <button className="py-2 px-6 border-2 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 rounded-lg mr-12">
+    <div
+      className={`flex flex-col p-4 ${isSidebarOpen ? "w-[80%]" : "w-[100%]"}`}
+    >
+      <div className="flex justify-end mb-4">
+        <button className="py-2 px-6 border-2 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 rounded-lg">
           Read all
         </button>
       </div>
-      <div className="block">
+
+      <div className="flex flex-col">
         {notifications
           .slice(indexOfFirstMessage, indexOfLastMessage)
           .map((notification, index) => (
             <div
               key={index}
-              className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 ${
-                isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
+              className={`h-[100px] bg-white ml-8 mt-3 rounded-lg flex items-center text-black shadow-xl p-4 ${
+                isSidebarOpen ? "w-[80%]" : "w-[90%]"
               }`}
             >
-              {notification}
+              <div className="flex-1">{notification}</div>
             </div>
           ))}
       </div>
+
       <div className="flex justify-between mt-5">
         <PreviousButton
           currentPage={currentPage}
@@ -78,7 +91,7 @@ const AdminNotificationContent = ({ isSidebarOpen }) => {
           handleNext={handleNext}
         />
       </div>
-    </>
+    </div>
   );
 };
 

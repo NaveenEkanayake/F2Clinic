@@ -1,7 +1,8 @@
-import AdminDashSideBar from "@/components/AdminSidebar/AdminSidebar";
 import React, { useState } from "react";
-import InventoryContent from "./InventoryContent/InventoryContent";
-const InventoryForm = () => {
+import AdminDashSideBar from "@/components/AdminSidebar/AdminSidebar";
+import CreateNotificationContentForm from "./CreateNotificationContentForm";
+
+const CreateNotificationForm = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   return (
     <div className="flex h-screen">
@@ -9,10 +10,10 @@ const InventoryForm = () => {
         <AdminDashSideBar open={isSidebarOpen} setOpen={setIsSidebarOpen} />
       </div>
       <div className="flex-grow">
-        <InventoryContent />
+        <CreateNotificationContentForm />
       </div>
     </div>
   );
 };
 
-export default InventoryForm;
+export default CreateNotificationForm;

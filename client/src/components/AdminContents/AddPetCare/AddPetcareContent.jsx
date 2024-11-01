@@ -165,7 +165,6 @@ const AddPetCareContent = () => {
               <label className="text-white font-semibold">Price</label>
               <div className="flex items-center border border-gray-200 rounded-lg bg-transparent">
                 <span className="text-white p-3">LKR</span>{" "}
-                {/* Currency label */}
                 <input
                   type="text"
                   name="price"

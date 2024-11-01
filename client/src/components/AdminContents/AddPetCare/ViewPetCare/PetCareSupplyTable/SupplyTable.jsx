@@ -16,7 +16,13 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
 import PuffLoader from "@/components/PuffLoader/PuffLoader";
-import { getAllPetcareSupply, verifyadmin } from "../../../../../Api/config";
+import {
+  getAllPetcareSupply,
+  verifyadmin,
+  deletepetcaresupply,
+} from "../../../../../Api/config";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom"; // Import navigate
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -85,6 +91,7 @@ const SupplyTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -98,12 +105,34 @@ const SupplyTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
+  const handleDelete = async (rowIndex) => {
+    const PetCareToDelete = rows[rowIndex];
+
+    if (!PetCareToDelete) {
+      console.error("No PetCare Supply found at this index.");
+      return;
+    }
+
+    try {
+      console.log("Deleting PetCare Supply:", PetCareToDelete);
+      const response = await deletepetcaresupply(PetCareToDelete._id);
+      console.log("Delete response:", response);
+      const newRows = rows.filter((_, index) => index !== rowIndex);
+      setRows(newRows);
+      toast.success(" PetCare Supply deleted successfully!", {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("Error deleting PetCare Supply:", error);
+      toast.error("Failed to delete PetCare Supply. Please try again.", {
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
+    const PetcareSupplyToUpdate = rows[rowIndex];
+    navigate(`/updatePetcareSupply/${PetcareSupplyToUpdate._id}`);
   };
 
   useEffect(() => {
@@ -112,7 +141,7 @@ const SupplyTable = () => {
         const adminResponse = await verifyadmin();
         console.log("Admin Response:", adminResponse);
         if (!adminResponse) {
-          console.error("Admin ID not found failed.");
+          console.error("Admin ID not found, failed.");
           return;
         }
 
@@ -121,6 +150,7 @@ const SupplyTable = () => {
 
         if (results && results.retrievedData) {
           const formattedRows = results.retrievedData.map((CareSupply) => ({
+            _id: CareSupply._id,
             SupplyImg: CareSupply.SupplyImg,
             Supplyname: CareSupply.Supplyname,
             price: CareSupply.price,
@@ -133,7 +163,7 @@ const SupplyTable = () => {
       } catch (err) {
         console.error("Error fetching Pet Care Supply:", err);
       } finally {
-        setTimeout(() => setLoading(false), 3000);
+        setLoading(false);
       }
     };
 
@@ -142,61 +172,68 @@ const SupplyTable = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen">
-        <PuffLoader />
-      </div>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <PuffLoader size={80} color="#5BAAEC" loading={loading} />
+      </Box>
     );
-  }
-
-  if (rows.length === 0) {
-    return <div>No Pet Care Supply found.</div>;
   }
 
   return (
     <TableContainer component={Paper}>
+      <ToastContainer position="top-right" />
       <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row">
-                <img
-                  src={row.SupplyImg}
-                  alt={row.Supplyname}
-                  style={{ width: 50, height: 50 }}
-                />
-              </TableCell>
-              <TableCell component="th" scope="row">
-                {row.Supplyname}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                {`LKR ${row.price}`}
-              </TableCell>
-              <TableCell align="right">{row.SupplyDescription}</TableCell>
-              <TableCell align="right">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleUpdate(index)}
-                  style={{ marginRight: 10 }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(index)}
-                >
-                  Delete
-                </Button>
+          {rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <p>There are no Pet care Supply Items to display.</p>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            rows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell component="th" scope="row">
+                  <img
+                    src={row.SupplyImg}
+                    alt={row.Supplyname}
+                    style={{ width: 50, height: 50 }}
+                  />
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.Supplyname}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {`LKR ${row.price}`}
+                </TableCell>
+                <TableCell align="right">{row.SupplyDescription}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdate(index)}
+                    style={{ marginRight: 10 }}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(index)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
+              <TableCell colSpan={5} />
             </TableRow>
           )}
         </TableBody>
@@ -204,7 +241,7 @@ const SupplyTable = () => {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={6}
+              colSpan={5}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

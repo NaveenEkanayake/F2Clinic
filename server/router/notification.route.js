@@ -1,7 +1,6 @@
 const express = require("express");
 const {
-    getCustomerEmailsAndRoles,
-    getConsultantEmails,
+    getAllEmails,
     sendNotificationToCustomer,
     sendNotificationToConsultant,
     getNotificationsByEmail,
@@ -13,12 +12,7 @@ const {
 } = require("../controllers/consultantlogincontroller");
 const { verifyUserToken } = require("../controllers/customercontroller");
 const router = express.Router();
-router.get(
-    "/getAllCustomerEmails",
-    verifyAdminToken,
-    getCustomerEmailsAndRoles
-);
-router.get("/getAllConsultantEmails", verifyAdminToken, getConsultantEmails);
+router.get("/getAllEmails", verifyAdminToken, getAllEmails);
 router.post(
     "/SendnotificationCustomer",
     verifyAdminToken,

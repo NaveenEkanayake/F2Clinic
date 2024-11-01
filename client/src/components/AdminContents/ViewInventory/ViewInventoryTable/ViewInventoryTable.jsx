@@ -16,7 +16,13 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
 import PuffLoader from "@/components/PuffLoader/PuffLoader";
-import { getAllInventories, verifyadmin } from "../../../../Api/config";
+import { useNavigate } from "react-router-dom";
+import {
+  getAllInventories,
+  verifyadmin,
+  deleteInventory,
+} from "../../../../Api/config";
+import { ToastContainer, toast } from "react-toastify";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -81,6 +87,7 @@ function TablePaginationActions(props) {
 }
 
 const ViewInventoryTable = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
@@ -98,12 +105,34 @@ const ViewInventoryTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
+  const handleDelete = async (rowIndex) => {
+    const inventoryToDelete = rows[rowIndex];
+
+    if (!inventoryToDelete) {
+      console.error("No inventory item found at this index.");
+      return;
+    }
+
+    try {
+      console.log("Deleting inventory:", inventoryToDelete);
+      const response = await deleteInventory(inventoryToDelete._id);
+      console.log("Delete response:", response);
+      const newRows = rows.filter((_, index) => index !== rowIndex);
+      setRows(newRows);
+      toast.success("Inventory deleted successfully!", {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("Error deleting inventory:", error);
+      toast.error("Failed to delete inventory. Please try again.", {
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
+    const inventoryToUpdate = rows[rowIndex];
+    navigate(`/updateInventory/${inventoryToUpdate._id}`);
   };
 
   useEffect(() => {
@@ -120,6 +149,7 @@ const ViewInventoryTable = () => {
         console.log("Inventory Results:", results);
         if (results && results.retrieveditems) {
           const formattedRows = results.retrieveditems.map((item) => ({
+            _id: item._id,
             imagepath: item.imagepath,
             itemName: item.ItemName,
             Category: item.Category,
@@ -133,7 +163,7 @@ const ViewInventoryTable = () => {
       } catch (err) {
         console.error("Error fetching Inventory:", err);
       } finally {
-        setTimeout(() => setLoading(false), 3000);
+        setLoading(false);
       }
     };
 
@@ -142,57 +172,67 @@ const ViewInventoryTable = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen">
-        <PuffLoader />
-      </div>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <PuffLoader size={80} color="#5BAAEC" loading={loading} />
+      </Box>
     );
-  }
-
-  if (rows.length === 0) {
-    return <div>No inventory found.</div>;
   }
 
   return (
     <TableContainer component={Paper}>
+      <ToastContainer position="top-right" />
       <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row, index) => (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                <img
-                  src={row.imagepath}
-                  alt={row.itemName}
-                  style={{ width: 50, height: 50 }}
-                />
-              </TableCell>
-              <TableCell component="th" scope="row">
-                {row.itemName}
-              </TableCell>
-              <TableCell align="right">{row.Category}</TableCell>
-              <TableCell align="right">{row.Quantity}</TableCell>
-              <TableCell align="right">{row.Description}</TableCell>
-              <TableCell align="right">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleUpdate(index)}
-                  style={{ marginRight: 10 }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(index)}
-                >
-                  Delete
-                </Button>
+          {rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} align="center">
+                <p>There are no Inventory Items to display.</p>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            (rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+            ).map((row, index) => (
+              <TableRow key={row._id}>
+                <TableCell component="th" scope="row">
+                  <img
+                    src={row.imagepath}
+                    alt={row.itemName}
+                    style={{ width: 50, height: 50 }}
+                  />
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.itemName}
+                </TableCell>
+                <TableCell align="right">{row.Category}</TableCell>
+                <TableCell align="right">{row.Quantity}</TableCell>
+                <TableCell align="right">{row.Description}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdate(index)}
+                    style={{ marginRight: 10 }}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(index)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
 
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
@@ -203,8 +243,8 @@ const ViewInventoryTable = () => {
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={6}
+              rowsPerPageOptions={[5, 10, 25]}
+              colSpan={3}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

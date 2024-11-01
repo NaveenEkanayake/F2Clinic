@@ -1,56 +1,43 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const http = require("http");
-const socketIo = require("socket.io");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
+const bodyParser = require("body-parser");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: process.env.CLIENT_PORT,
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
+const io = new Server(server, {
+    cors: {
+        origin: process.env.CLIENT_PORT,
+        methods: ["GET", "POST"],
+        credentials: true,
+    },
 });
-
-// Handle socket connections
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+    console.log("A user connected:", socket.id);
+    socket.emit("welcome", { message: "Welcome to the Socket.IO server!" });
 
-  // Optional: Emit a welcome message to the newly connected client
-  socket.emit("welcome", { message: "Welcome to the Socket.IO server!" });
-
-  // Handle disconnection
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+    });
 });
 
-// Middleware for CORS and parsing
+// Middleware
 app.use(
-  cors({
-    origin: process.env.CLIENT_PORT,
-    credentials: true,
-  })
+    cors({
+        origin: process.env.CLIENT_PORT,
+        methods: ["GET", "POST"],
+        credentials: true,
+    })
 );
 app.use(express.json());
 app.use(cookieParser());
-
-// Attach Socket.IO to the request object
 app.use((req, res, next) => {
-  req.io = io; // No need to check if req.io is set; it's always set here
-  next();
-});
-
-// Test endpoint to emit a socket event
-app.get("/test-socket", (req, res) => {
-  req.io.emit("testEvent", {
-    message: "This is a direct test message from the server.",
-  });
-  res.send("Direct test event emitted");
+    req.io = io;
+    next();
 });
 
 // Routes
@@ -83,16 +70,16 @@ app.use("/api", NotificationRoute);
 
 // Connect to MongoDB
 const MONGODB_URL = process.env.MONGODB_URL;
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect(MONGODB_URL)
-  .then(() => {
-    console.log("Successfully connected to the database");
-    server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("Successfully connected to the database");
+        server.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error("Error connecting to MongoDB:", error);
     });
-  })
-  .catch((error) => {
-    console.error("Error connecting to MongoDB:", error);
-  });
