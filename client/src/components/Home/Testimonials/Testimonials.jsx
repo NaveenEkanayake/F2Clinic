@@ -5,7 +5,6 @@ import Client2 from "../../../assets/images/testimonial2.jpeg";
 import Client3 from "../../../assets/images/testimonial3.jpeg";
 import Client4 from "../../../assets/images/testimonial4.jpeg";
 import Client5 from "../../../assets/images/testimonial5.jpeg";
-
 import pet1 from "../../../assets/images/testimonialpet1.jpeg";
 import pet2 from "../../../assets/images/testimonialpet2.jpeg";
 import pet3 from "../../../assets/images/testimonialpet3.jpeg";

@@ -123,6 +123,7 @@ const SupplyTable = () => {
           const formattedRows = results.retrievedData.map((CareSupply) => ({
             SupplyImg: CareSupply.SupplyImg,
             Supplyname: CareSupply.Supplyname,
+            price: CareSupply.price,
             SupplyDescription: CareSupply.SupplyDescription,
           }));
           setRows(formattedRows);
@@ -169,6 +170,9 @@ const SupplyTable = () => {
               </TableCell>
               <TableCell component="th" scope="row">
                 {row.Supplyname}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {`LKR ${row.price}`}
               </TableCell>
               <TableCell align="right">{row.SupplyDescription}</TableCell>
               <TableCell align="right">

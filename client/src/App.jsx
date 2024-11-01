@@ -26,6 +26,7 @@ import ConsultantDashboard from "./pages/ConsultantDashboard/ConsultantDasahboar
 import ConsultantPetRecord from "./components/AdminPetRecords/ConsultantPetRecord";
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
 import ConsultantLogin from "./pages/ConsultantLogin/ConsultantLogin";
+import UpdateConsultantForm from "./components/UpdateConsultantForm/UpdateConsultantForm";
 
 const withLoading = (Component) => {
   return function WithLoadingComponent(props) {
@@ -50,6 +51,7 @@ function App() {
 
   const LoadingMainHome = () => <MainHome />;
   const LoadingCustomerLogin = withLoading(CustomerLogin);
+  const LoadingUpdateConsultantForm = withLoading(UpdateConsultantForm);
   const LoadingCustomerRegister = withLoading(CustomerRegister);
   const LoadingHomePage = withLoading(HomePage);
   const LoadingCustomerDashboard = withLoading(CustomerDashboard);
@@ -97,6 +99,10 @@ function App() {
       <Route path="/Inventory" element={<LoadingInventoryForm />} />
       <Route path="/ViewInventory" element={<LoadingViewInventory />} />
       <Route path="/ConsultantLogin" element={<LoadingConsultantLogin />} />
+      <Route
+        path="/updateConsultantForm/:id"
+        element={<LoadingUpdateConsultantForm />}
+      />
       <Route
         path="/Consultantdashboard"
         element={<LoadingConsultantDashboard />}

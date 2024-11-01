@@ -12,20 +12,12 @@ export const registerCustomer = async(userData) => {
 };
 
 export const Logincustomer = async(userData) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/login`, userData);
-        return response.data;
-    } catch (error) {
-        console.error("Error Login customer:", error);
-    }
+    const response = await axios.post(`${BASE_URL}/login`, userData);
+    return response.data;
 };
 export const Loginadmin = async(userData) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/loginadmin`, userData);
-        return response.data;
-    } catch (error) {
-        console.error("Error Login admin:", error);
-    }
+    const response = await axios.post(`${BASE_URL}/loginadmin`, userData);
+    return response.data;
 };
 
 export const Logoutadmin = async() => {
@@ -46,12 +38,8 @@ export const Logoutadmin = async() => {
 };
 
 export const Loginconsultant = async(userData) => {
-    try {
-        const response = await axios.post(`${BASE_URL}/loginConsultant`, userData);
-        return response.data;
-    } catch (error) {
-        console.error("Error Login Consultant:", error);
-    }
+    const response = await axios.post(`${BASE_URL}/loginConsultant`, userData);
+    return response.data;
 };
 
 export const verifyconsultant = async() => {
@@ -178,6 +166,27 @@ export const getAdminIMG = async() => {
         console.error("Error retrieving admin image:", error);
     }
 };
+export const uploadCustomerImage = async(imageData) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/addimg`, imageData, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error uploading Customer image:", error);
+    }
+};
+
+export const getCustomerIMG = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getIMG`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error retrieving Customer image:", error);
+    }
+};
 
 export const refreshToken = async() => {
     try {
@@ -291,6 +300,85 @@ export const getAllPetcareSupply = async() => {
         return response.data;
     } catch (error) {
         console.error("Error fetching PetcareSupply:", error);
+        throw error;
+    }
+};
+
+export const getAppointmentCount = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAppointmentCount/:id`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching count of AppointmentCount:", error);
+        throw error;
+    }
+};
+
+export const getPetRecordCount = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getPetRecordByID/:id`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching count of PetRecord:", error);
+        throw error;
+    }
+};
+export const getAllConsultantNames = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllConsultantNames`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching  ConsultantNames:", error);
+        throw error;
+    }
+};
+
+export const addAppointment = async(data) => {
+    try {
+        const addAppointment = await axios.post(`${BASE_URL}/Appointment`, data);
+        return addAppointment.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const updateConsultant = async(id, data) => {
+    try {
+        const response = await axios.put(
+            `${BASE_URL}/updateConsultant/${id}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error updating consultant:", error);
+        throw error;
+    }
+};
+
+export const deleteConsultant = async(id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/deleteConsultant/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting consultant:", error);
+        throw error;
+    }
+};
+
+export const getConsultantById = async(id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getConsultantByID/${id}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Consultant by ID:", error);
         throw error;
     }
 };

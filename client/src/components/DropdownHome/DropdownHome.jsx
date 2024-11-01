@@ -26,7 +26,7 @@ const DropdownHome = () => {
         className="w-[36px] h-[36px] rounded-full invert brightness-110 cursor-pointer"
       />
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+        <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-lg z-20">
           <div className="p-2" onClick={(e) => e.stopPropagation()}>
             <p className="text-gray-500">
               Welcome !!!!,

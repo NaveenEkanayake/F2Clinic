@@ -17,6 +17,7 @@ const AddPetCareContent = () => {
   const [formData, setFormData] = useState({
     Supplyname: "",
     SupplyImg: null,
+    price: "",
     SupplyDescription: "",
   });
   const [img, setImg] = useState(null);
@@ -85,6 +86,7 @@ const AddPetCareContent = () => {
     const PetcareSupplyData = {
       Supplyname: formData.Supplyname,
       SupplyImg: formData.SupplyImg,
+      price: formData.price,
       SupplyDescription: formData.SupplyDescription,
     };
 
@@ -158,6 +160,21 @@ const AddPetCareContent = () => {
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 onChange={handleImageChange}
               />
+            </div>
+            <div className="w-full relative">
+              <label className="text-white font-semibold">Price</label>
+              <div className="flex items-center border border-gray-200 rounded-lg bg-transparent">
+                <span className="text-white p-3">LKR</span>{" "}
+                {/* Currency label */}
+                <input
+                  type="text"
+                  name="price"
+                  className="w-full p-3 rounded-lg border-none bg-transparent text-white focus:outline-none" // Adjusted class for border
+                  placeholder="Enter the Price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
             <div className="w-full relative">
               <label className="text-white font-semibold">Description</label>

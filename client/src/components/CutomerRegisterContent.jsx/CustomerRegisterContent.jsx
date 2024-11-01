@@ -17,12 +17,15 @@ const CustomerRegisterContent = () => {
   const [fullname, setFullname] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     registerCustomer({ fullname, email, password })
       .then((result) => {
-        console.log("registration succufully ", result);
+        console.log("Registration successfully", result);
         toast.success("Registration successful!", {
           position: "top-right",
           autoClose: 3000,
@@ -32,11 +35,16 @@ const CustomerRegisterContent = () => {
         }, 3000);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Registration failed:", err);
         toast.error("Registration failed. User might already exist.", {
           position: "top-right",
           autoClose: 3000,
         });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
       });
   };
 
@@ -114,7 +122,7 @@ const CustomerRegisterContent = () => {
               />
             </div>
           </div>
-          <RegisterButton>Register</RegisterButton>
+          <RegisterButton loading={loading}>Register</RegisterButton>
         </form>
         <ToastContainer />
       </motion.div>

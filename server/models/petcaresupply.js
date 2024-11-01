@@ -9,6 +9,10 @@ const petCaresupplySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    price: {
+        type: Number,
+        required: true,
+    },
     SupplyDescription: {
         type: String,
         required: true,

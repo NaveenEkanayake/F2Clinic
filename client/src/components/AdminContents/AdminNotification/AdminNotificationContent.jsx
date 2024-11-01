@@ -1,32 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PreviousButton from "./PrevButton/PrevButton";
 import NextButton from "./NextButton/NextButton";
+import { io } from "socket.io-client";
 
 const AdminNotificationContent = ({ isSidebarOpen }) => {
-  const messages = [
-    { id: 1, content: "Message 1" },
-    { id: 2, content: "Message 2" },
-    { id: 3, content: "Message 3" },
-    { id: 4, content: "Message 4" },
-    { id: 5, content: "Message 5" },
-    { id: 6, content: "Message 6" },
-    { id: 7, content: "Message 7" },
-    { id: 8, content: "Message 8" },
-    { id: 9, content: "Message 9" },
-    { id: 10, content: "Message 10" },
-  ];
-
+  const [notifications, setNotifications] = useState([]);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const socketRef = React.useRef();
 
+  useEffect(() => {
+    socketRef.current = io("http://localhost:3000", { withCredentials: true });
+
+    socketRef.current.on("connect", () => {
+      console.log("Connected to socket with ID:", socketRef.current.id);
+    });
+    socketRef.current.on("addConsultantNotification", (data) => {
+      console.log("Notification received:", data);
+      if (data && data.message) {
+        setNotifications((prev) => [...prev, data.message]);
+      }
+    });
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        console.log("Socket disconnected");
+      }
+    };
+  }, []);
+
+  // Pagination logic
   const indexOfLastMessage = currentPage * itemsPerPage;
   const indexOfFirstMessage = indexOfLastMessage - itemsPerPage;
-  const currentMessages = messages.slice(
-    indexOfFirstMessage,
-    indexOfLastMessage
-  );
-
-  const totalPages = Math.ceil(messages.length / itemsPerPage);
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
 
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -47,20 +53,20 @@ const AdminNotificationContent = ({ isSidebarOpen }) => {
           Read all
         </button>
       </div>
-
       <div className="block">
-        {currentMessages.map((message) => (
-          <div
-            key={message.id}
-            className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 ${
-              isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
-            }`}
-          >
-            {message.content}
-          </div>
-        ))}
+        {notifications
+          .slice(indexOfFirstMessage, indexOfLastMessage)
+          .map((notification, index) => (
+            <div
+              key={index}
+              className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 ${
+                isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
+              }`}
+            >
+              {notification}
+            </div>
+          ))}
       </div>
-
       <div className="flex justify-between mt-5">
         <PreviousButton
           currentPage={currentPage}

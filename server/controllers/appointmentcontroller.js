@@ -3,7 +3,7 @@ const AppointmentModel = require("../models/appointment");
 const User = require("../models/customer");
 const Consultant = require("../models/consultant");
 const {
-    getAllConsultantnames,
+    getAllConsultantNames,
 } = require("../controllers/consultantcontroller");
 
 const addAppointment = async(req, res) => {
@@ -13,23 +13,30 @@ const addAppointment = async(req, res) => {
         if (!userId) {
             return res.status(400).json({ message: "UserId is required." });
         }
-
         const {
             Date: appointmentDate,
             Time: appointmentTime,
+            SpecialConcern,
             OwnerName,
-            Email,
+            OwnerEmail,
             Doctorname,
+            AppointmentPrice,
         } = req.body;
+
+        if (AppointmentPrice === undefined || AppointmentPrice === null) {
+            return res.status(400).json({ message: "AppointmentPrice is required." });
+        }
+
         const cleanedDoctorname = Doctorname.replace(/Dr\.?/i, "").trim();
         const [firstname, lastname] = cleanedDoctorname.split(" ");
         if (!firstname || !lastname) {
             return res.status(400).json({ message: "Invalid doctor name format." });
         }
-        const allConsultantsResponse = await getAllConsultantnames(req);
-        const consultantNames = allConsultantsResponse.consultants;
 
+        const allConsultantsResponse = await getAllConsultantNames(req);
+        const consultantNames = allConsultantsResponse.consultants;
         const formattedDoctorName = `Dr. ${firstname} ${lastname}`;
+
         if (!consultantNames.includes(formattedDoctorName)) {
             return res
                 .status(404)
@@ -74,11 +81,13 @@ const addAppointment = async(req, res) => {
             Doctorname: formattedDoctorName,
             Date: formattedDate,
             Time: formattedTime,
+            SpecialConcern,
             OwnerName,
-            Email,
+            OwnerEmail,
             UserId: userId,
             Status: false,
             Count: newCount,
+            AppointmentPrice,
         };
 
         const appointment = await AppointmentModel.create(newAppointment);
@@ -110,6 +119,39 @@ const countUserAppointments = async(req, res) => {
     } catch (err) {
         console.error(`Error counting appointments for userId ${userId}:`, err);
         return res.status(500).json({ message: `Server Error: ${err.message}` });
+    }
+};
+const getAllConsultantAppointments = async(req, res) => {
+    try {
+        const fullName = req.fullname;
+        if (!fullName) {
+            return res.status(400).json({ message: "Full name is required." });
+        }
+
+        // Strip "Dr." prefix from the fullName
+        const strippedFullName = fullName.replace(/^Dr\.\s*/i, "").trim();
+
+        console.log("Consultant Full Name:", fullName);
+        console.log("Stripped Full Name:", strippedFullName);
+
+        // Query the appointments where Doctorname matches the stripped full name
+        const appointments = await AppointmentModel.find({
+            Doctorname: { $regex: new RegExp(`^Dr\\.\\s*${strippedFullName}$`, "i") },
+        });
+
+        // Debugging: log retrieved appointments
+        console.log("Retrieved Appointments:", appointments);
+
+        if (appointments.length === 0) {
+            return res
+                .status(404)
+                .json({ message: "No appointments found for this consultant." });
+        }
+
+        return res.status(200).json(appointments);
+    } catch (error) {
+        console.error("Error retrieving appointments:", error);
+        return res.status(500).json({ message: "Server error" });
     }
 };
 
@@ -209,6 +251,48 @@ const deleteAppointment = async(req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+const countAppointmentPrices = async(req, res) => {
+    try {
+        const userId = req.id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "User ID not provided." });
+        }
+
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+
+        const appointments = await AppointmentModel.find({ UserId: userObjectId });
+        console.log("User appointments:", appointments);
+
+        const result = await AppointmentModel.aggregate([{
+                $match: {
+                    UserId: userObjectId,
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalAppointmentPrice: { $sum: "$AppointmentPrice" },
+                },
+            },
+        ]);
+
+        const total = result.length > 0 ? result[0].totalAppointmentPrice : 0;
+
+        console.log("Aggregation result:", result);
+
+        return res.status(200).json({
+            message: "Total Appointment Prices calculated successfully",
+            totalAppointmentPrice: total,
+        });
+    } catch (error) {
+        console.error("Error in calculating total appointment prices:", error);
+        return res.status(500).json({
+            message: "An error occurred while calculating total appointment prices.",
+        });
+    }
+};
 module.exports = {
     addAppointment,
     getAllAppointments,
@@ -216,4 +300,6 @@ module.exports = {
     updateAppointment,
     deleteAppointment,
     countUserAppointments,
+    countAppointmentPrices,
+    getAllConsultantAppointments,
 };

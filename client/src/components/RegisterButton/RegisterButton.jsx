@@ -1,14 +1,42 @@
-import React from "react";
-import { IoLogInOutline } from "react-icons/io5";
+import React, { useState, useEffect } from "react";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import HourglassFullIcon from "@mui/icons-material/HourglassFull";
+import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 
-const RegisterButton = (props) => {
+const RegisterButton = ({ loading, children }) => {
+  const [currentIcon, setCurrentIcon] = useState(0);
+
+  const icons = [
+    <HourglassEmptyIcon className="text-white mr-2" />,
+    <HourglassFullIcon className="text-white mr-2" />,
+    <HourglassTopIcon className="text-white mr-2" />,
+  ];
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setCurrentIcon((prev) => (prev + 1) % icons.length);
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, [loading, icons.length]);
+
   return (
     <button
       type="submit"
-      className="w-full ml-6 py-4 mt-4 bg-white/70 hover:bg-blue-500 text-white rounded-lg  transition duration-300 flex items-center justify-center text-center text-[18px]"
+      className={`w-full border border-blue-500 text-blue-500 hover:text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 ease-in-out flex items-center justify-center ${
+        loading ? "cursor-not-allowed" : ""
+      }`}
+      disabled={loading}
     >
-      <IoLogInOutline className="mr-2" />
-      {props.children}
+      {loading ? (
+        <div className="flex items-center">
+          <span className={`animate-spin`}>{icons[currentIcon]}</span>
+          <span className="text-white">Registering...</span>
+        </div>
+      ) : (
+        <span>{children}</span>
+      )}
     </button>
   );
 };

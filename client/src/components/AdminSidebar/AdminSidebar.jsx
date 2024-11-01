@@ -5,7 +5,7 @@ import logo from "../../assets/images/logo.png";
 import Avatar from "../../assets/images/avatar.png";
 import ConsultantIcon from "../../assets/images/consultant.png";
 import Setting from "../../assets/images/settings.jpg";
-import Notification from "../../assets/images/Notification.png";
+import NotificationIcon from "../../assets/images/Notification.png";
 import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkModeButton/DarkModeButton";
@@ -17,7 +17,6 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import axios from "axios";
 import { verifyadmin, uploadAdminImage, getAdminIMG } from "../../Api/config";
 import LogoutButton from "./AdminLogoutButton/LogoutButton";
 import { ToastContainer } from "react-toastify";
@@ -29,13 +28,16 @@ const AdminSidebar = ({ open, setOpen }) => {
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [notificationsCount] = useState(1);
+  const [adminData, setAdminData] = useState(null);
   const [AdminUrl, setAdminUrl] = useState(
     localStorage.getItem("AdminUrl") || Avatar
   );
   const [img, setImg] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
   const fileInputRef = useRef(null);
   const [adminId, setAdminId] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
 
   const toggleDropdown = (setter) => () => setter((prev) => !prev);
 
@@ -187,10 +189,10 @@ const AdminSidebar = ({ open, setOpen }) => {
           )}
           {dialogVisible && (
             <div className="absolute top-0 left-[120px] w-32  mt-2 mr-2 p-2 bg-white border rounded shadow-lg z-10 cursor-pointer">
-              <h2 className="text-sm font-semibold">
+              <h2 className="text-xs font-semibold">
                 Welcome, {adminData.fullname}
               </h2>
-              <p className="text-xs mt-1">{adminData.email}</p>
+              <p className="text-[8px] mt-1">{adminData.email}</p>
             </div>
           )}
         </div>
@@ -297,25 +299,42 @@ const AdminSidebar = ({ open, setOpen }) => {
             </ul>
           )}
         </div>
-        <Link
-          to="/adminNotification"
-          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
-            !open ? "justify-center" : ""
-          }`}
-        >
-          <img src={Notification} className="h-6 w-6 brightness-110" />
-          {notificationsCount > 0 && (
-            <span className="absolute mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              {notificationsCount}
-            </span>
+        <div className={`text-white`}>
+          <div
+            onClick={toggleDropdown(setIsMessageOpen)}
+            className={`flex items-center py-4 px-4 hover:bg-blue-500 font-normal rounded-md cursor-pointer ${
+              !open ? "justify-center" : ""
+            }`}
+          >
+            <img
+              src={NotificationIcon}
+              className={`w-5 h-5 mr-2  brightness-110`}
+              alt="Message Icon"
+            />
+            {open && <span>Message</span>}
+          </div>
+          {isMessageOpen && open && (
+            <ul className="ml-6 space-y-2">
+              <Link
+                to="/createmessage"
+                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
+              >
+                Create Message
+              </Link>
+              <Link
+                to="/adminNotification"
+                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
+              >
+                View Message
+              </Link>
+            </ul>
           )}
-          {open && <span>Notification</span>}
-        </Link>
+        </div>
         <div className="relative">
           <Link
             onClick={(e) => {
-              e.preventDefault(); // Prevents navigation
-              setDropdownOpen((prev) => !prev); // Toggles dropdown state
+              e.preventDefault();
+              setDropdownOpen((prev) => !prev);
             }}
             className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
               !open ? "justify-center" : ""

@@ -7,12 +7,61 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import * as React from "react";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import { useState, useEffect } from "react";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import TotalExpenses from "../TotalExpenses/TotalExpenses";
+import {
+  getAppointmentCount,
+  verifyCustomer,
+  getPetRecordCount,
+} from "../../../Api/config";
 
 const DashboardContents = ({ isSidebarOpen }) => {
+  const [countedAppointments, setCountedAppointments] = useState({
+    totalCount: 0,
+  });
+  const [countedpetRecords, setCountedpetRecords] = useState({
+    totalCount: 0,
+  });
+  useEffect(() => {
+    const fetchPetRecordCount = async () => {
+      try {
+        const UserId = verifyCustomer();
+        if (!UserId) {
+          console.log("User ID not found.");
+        }
+
+        const PetRecordCount = await getPetRecordCount();
+        console.log("PetRecord Count Response:", PetRecordCount);
+        setCountedpetRecords({ totalCount: PetRecordCount.petRecordCount });
+      } catch (err) {
+        console.error("Error fetching Customercount:", err);
+      }
+    };
+
+    fetchPetRecordCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchAppointmentCount = async () => {
+      try {
+        const UserId = verifyCustomer();
+        if (!UserId) {
+          console.log("User ID not found.");
+        }
+
+        const AppointmentCount = await getAppointmentCount();
+        console.log("Appointment Count Response:", AppointmentCount);
+        setCountedAppointments({
+          totalCount: AppointmentCount.appointmentCount,
+        });
+      } catch (err) {
+        console.error("Error fetching Customercount:", err);
+      }
+    };
+
+    fetchAppointmentCount();
+  }, []);
   return (
     <>
       <Box sx={{ height: 20 }} />
@@ -54,7 +103,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                   sx={{ color: "text.secondary" }}
                   mt={4}
                 >
-                  1
+                  {countedAppointments.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
@@ -95,7 +144,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                   mt={4}
                   sx={{ color: "text.secondary" }}
                 >
-                  1
+                  {countedpetRecords.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>

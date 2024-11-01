@@ -12,12 +12,15 @@ const CustomerLoginContents = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     Logincustomer({ email, password })
       .then((result) => {
-        console.log("Login succufully ", result);
+        console.log("Login successfully", result);
         toast.success("Login successful!", {
           position: "top-right",
           autoClose: 3000,
@@ -27,16 +30,22 @@ const CustomerLoginContents = () => {
         }, 3000);
       })
       .catch((err) => {
-        console.log(err);
-        toast.error("Login failed. Invalid Password or email already exist.", {
+        console.error("Login failed:", err);
+        toast.error("Login failed. Invalid email or password.", {
           position: "top-right",
           autoClose: 3000,
         });
-        if (err) {
+        setTimeout(() => {
           navigate("/customerlogin");
-        }
+        }, 3000);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
       });
   };
+
   return (
     <div
       className="w-full min-h-screen flex items-center justify-center bg-center bg-cover"
@@ -95,7 +104,7 @@ const CustomerLoginContents = () => {
               />
             </div>
           </div>
-          <LoginButton>Login</LoginButton>
+          <LoginButton loading={loading}>Login</LoginButton>
         </form>
         <ToastContainer />
       </motion.div>

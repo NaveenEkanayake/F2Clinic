@@ -93,9 +93,11 @@ const LoginUser = async(req, res) => {
             return res.status(400).json({ message: "Invalid email or password." });
         }
 
-        const token = jwt.sign({ id: existingUser._id }, JWT_SECRET_KEY, {
-            expiresIn: "2h",
-        });
+        const token = jwt.sign({ id: existingUser._id, email: existingUser.email },
+            JWT_SECRET_KEY, {
+                expiresIn: "2h",
+            }
+        );
         res.cookie("token", token, {
             path: "/",
             expires: new Date(Date.now() + 1000 * 60 * 60 * 2),
@@ -134,6 +136,7 @@ const verifyUserToken = (req, res, next) => {
     try {
         const decodedUser = jwt.verify(actualToken, JWT_SECRET_KEY);
         req.id = decodedUser.id;
+        req.email = decodedUser.email;
         req.userRole = decodedUser.role;
         next();
     } catch (err) {
@@ -142,7 +145,6 @@ const verifyUserToken = (req, res, next) => {
     }
 };
 
-// Get User by Token
 const getUser = async(req, res) => {
     const userId = req.id;
     try {

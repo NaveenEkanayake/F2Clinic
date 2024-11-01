@@ -1,19 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppointmentSvg from "../AppointmentSVG/AppointmentSvg";
 import PersonalForm from "../PeronalForm/PersonalForm";
 import AppointmentNextButton from "../NextButton/NextButton";
 import PaymentForm from "../Payment/Payment";
+import {
+  verifyCustomer,
+  getAllConsultantNames,
+  addAppointment,
+} from "../../../../Api/config";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentContents = ({ isSidebarOpen }) => {
   const [currentForm, setCurrentForm] = useState("appointment");
+  const [consultantNames, setConsultantNames] = useState([]);
+
+  const [doctorName, setDoctorName] = useState("");
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [timeSlot, setTimeSlot] = useState("");
+  const [specialConcern, setSpecialConcern] = useState("");
+  const [appointmentPrice, setAppointmentPrice] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const appointmentData = {
+      doctorName,
+      appointmentDate,
+      timeSlot,
+      specialConcern,
+    };
+
+    addAppointment(appointmentData)
+      .then((result) => {
+        console.log("Appointment added successfully", result);
+        toast.success("Appointment added successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          navigate("/admindashboard");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error("Appointment failed:", err);
+        toast.error("Appointment failed. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    const fetchAllConsultantNames = async () => {
+      try {
+        const UserId = verifyCustomer();
+        if (!UserId) {
+          console.log("User ID not found.");
+        }
+
+        const response = await getAllConsultantNames();
+        console.log(response);
+        if (Array.isArray(response.consultants)) {
+          setConsultantNames(response.consultants);
+        } else {
+          console.error(
+            "Consultants data is not an array:",
+            response.consultants
+          );
+          setConsultantNames([]);
+        }
+      } catch (err) {
+        console.error("Error fetching Consultant Names:", err);
+        setConsultantNames([]);
+      }
+    };
+
+    fetchAllConsultantNames();
+  }, []);
 
   const handleBack = () => {
     setCurrentForm("appointment");
   };
+
   const handleConfirmPayment = () => {
     alert("Payment Confirmed!");
   };
+
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <div className="flex w-full max-w-5xl">
@@ -38,29 +118,41 @@ const AppointmentContents = ({ isSidebarOpen }) => {
             </p>
           </div>
           {currentForm === "appointment" ? (
-            <form className="w-full h-auto flex flex-col items-center gap-7 px-10">
+            <form
+              className="w-full h-auto flex flex-col items-center gap-7 px-10"
+              onSubmit={handleSubmit}
+            >
               <div className="w-full relative">
                 <label className="text-white font-semibold">Doctor Name</label>
-                <select className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none flex items-center">
-                  <option value="" disabled selected>
+                <select
+                  className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none flex items-center"
+                  value={doctorName}
+                  onChange={(e) => setDoctorName(e.target.value)}
+                >
+                  <option value="" disabled>
                     Select a doctor
                   </option>
-                  <option className="bg-slate-900" value="doctor1">
-                    Doctor 1
-                  </option>
-                  <option className="bg-slate-900" value="doctor2">
-                    Doctor 2
-                  </option>
-                  <option className="bg-slate-900" value="doctor3">
-                    Doctor 3
-                  </option>
+                  {consultantNames.length > 0 ? (
+                    consultantNames.map((name, index) => (
+                      <option key={index} className="bg-slate-900" value={name}>
+                        {name}
+                      </option>
+                    ))
+                  ) : (
+                    <option className="bg-slate-900" disabled>
+                      No consultants available
+                    </option>
+                  )}
                 </select>
               </div>
-
               <div className="w-full relative">
                 <label className="text-white font-semibold">Time Slot</label>
-                <select className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none flex items-center">
-                  <option value="" disabled selected>
+                <select
+                  className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none flex items-center"
+                  value={timeSlot}
+                  onChange={(e) => setTimeSlot(e.target.value)}
+                >
+                  <option value="" disabled>
                     Select a time slot
                   </option>
                   <option className="bg-slate-900" value="9am">
@@ -81,10 +173,33 @@ const AppointmentContents = ({ isSidebarOpen }) => {
                   <input
                     type="date"
                     className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
+                    value={appointmentDate}
+                    onChange={(e) => setAppointmentDate(e.target.value)}
                   />
                 </div>
               </div>
-
+              <div className="w-full relative">
+                <label className="text-white font-semibold">
+                  Appointment Price:
+                </label>
+                <div className="flex items-center mt-2">
+                  <select
+                    className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
+                    value={appointmentPrice}
+                    onChange={(e) => setAppointmentPrice(e.target.value)}
+                  >
+                    <option value="" className="bg-slate-900" disabled>
+                      Select appointment price
+                    </option>
+                    <option value="2500" className="bg-slate-900">
+                      Normal - Rs. 2500
+                    </option>
+                    <option value="3500" className="bg-slate-900">
+                      Immediate - Rs. 3500
+                    </option>
+                  </select>
+                </div>
+              </div>
               <div className="w-full relative">
                 <label className="text-white font-semibold">
                   Special Concern
@@ -93,6 +208,8 @@ const AppointmentContents = ({ isSidebarOpen }) => {
                   <textarea
                     className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                     placeholder="Enter any special concerns..."
+                    value={specialConcern}
+                    onChange={(e) => setSpecialConcern(e.target.value)}
                   />
                 </div>
               </div>

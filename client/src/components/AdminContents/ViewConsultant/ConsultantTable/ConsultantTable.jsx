@@ -15,9 +15,15 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import { ToastContainer, toast } from "react-toastify";
 import Button from "@mui/material/Button";
-import { getAllConsultant, verifyadmin } from "../../../../Api/config";
+import {
+  getAllConsultant,
+  verifyadmin,
+  deleteConsultant,
+} from "../../../../Api/config";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -82,6 +88,7 @@ function TablePaginationActions(props) {
 }
 
 const ConsultantTable = () => {
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [consultants, setConsultants] = useState([]);
@@ -102,16 +109,29 @@ const ConsultantTable = () => {
   const handleDelete = async (rowIndex) => {
     const consultantToDelete = consultants[rowIndex];
     try {
-      await axios.delete(`/consultants/${consultantToDelete._id}`);
+      // Call the deleteConsultant function
+      await deleteConsultant(consultantToDelete._id); // Pass the consultant ID directly
+      // Update state to remove the deleted consultant from the list
       setConsultants((prev) => prev.filter((_, index) => index !== rowIndex));
       console.log("Deleted consultant:", consultantToDelete);
+
+      // Success toast message
+      toast.success("Consultant deleted successfully!", {
+        autoClose: 3000, // Toast will close after 3 seconds
+      });
     } catch (error) {
       console.error("Error deleting consultant:", error);
+
+      // Error toast message
+      toast.error("Failed to delete consultant. Please try again.", {
+        autoClose: 3000, // Toast will close after 3 seconds
+      });
     }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update consultant at index:", rowIndex);
+    const consultantToUpdate = consultants[rowIndex];
+    navigate(`/updateConsultantForm/${consultantToUpdate._id}`);
   };
 
   useEffect(() => {
@@ -149,52 +169,63 @@ const ConsultantTable = () => {
         alignItems="center"
         height="100vh"
       >
-        <PuffLoader size={80} color="#123abc" loading={loading} />
+        <PuffLoader size={80} color="#5BAAEC" loading={loading} />
       </Box>
     );
   }
 
   return (
     <TableContainer component={Paper}>
+      <ToastContainer position="top-right" />
       <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
-          {(rowsPerPage > 0
-            ? consultants.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
-            : consultants
-          ).map((consultant, index) => (
-            <TableRow key={consultant._id}>
-              <TableCell component="th" scope="row">
-                {`DR. ${consultant.firstname} ${consultant.lastname}`}
-              </TableCell>
-              <TableCell align="right">{consultant.speciality}</TableCell>
-              <TableCell align="right">{consultant.email}</TableCell>
-              <TableCell align="right">{consultant.telephoneNumber}</TableCell>
-              <TableCell align="right">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleUpdate(index)}
-                  style={{ marginRight: 10 }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(index)}
-                >
-                  Delete
-                </Button>
+          {consultants.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <p>There are no consultants to display.</p>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            (rowsPerPage > 0
+              ? consultants.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : consultants
+            ).map((consultant, index) => (
+              <TableRow key={consultant._id}>
+                <TableCell component="th" scope="row">
+                  {`DR. ${consultant.firstname} ${consultant.lastname}`}
+                </TableCell>
+                <TableCell align="right">{consultant.speciality}</TableCell>
+                <TableCell align="right">{consultant.email}</TableCell>
+                <TableCell align="right">
+                  {consultant.telephoneNumber}
+                </TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdate(index)}
+                    style={{ marginRight: 10 }}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(index)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
 
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={6} />
+              <TableCell colSpan={5} />
             </TableRow>
           )}
         </TableBody>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Sidebararrow from "../../assets/images/Sidebararrow.png";
 import logo from "../../assets/images/logo.png";
-import Avatar from "../../assets/images/avatar.png";
 import AppointmentIcon from "../../assets/images/Records.jpg";
 import PetRecordsIcon from "../../assets/images/Records.jpg";
 import Setting from "../../assets/images/settings.jpg";
@@ -12,7 +11,6 @@ import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkmodeButton/DarkModeButton";
 import ContactUs from "../../assets/images/ContactUs.png";
-import axios from "axios";
 import app from "../Firebase/config";
 import {
   getStorage,
@@ -20,7 +18,14 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { verifyCustomer } from "../../Api/config";
+import {
+  verifyCustomer,
+  uploadCustomerImage,
+  getCustomerIMG,
+} from "../../Api/config";
+import Avatar from "../../assets/images/avatar.png";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DashboardSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
@@ -30,43 +35,46 @@ const DashboardSidebar = ({ open, setOpen }) => {
   const [inputs, setInputs] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [imgUrl, setImgUrl] = useState(
-    localStorage.getItem("imgUrl") || Avatar
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [UserData, setUserData] = useState(null);
+  const [IMGurl, setIMGurl] = useState(
+    localStorage.getItem("IMGurl") || Avatar
   );
-  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
-
   const toggleAppointmentDropdown = () =>
     setIsAppointmentOpen(!isAppointmentOpen);
   const togglePetRecordsDropdown = () => setIsPetRecordsOpen(!isPetRecordsOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const verifyUser = async () => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await verifyCustomer();
+        if (response && response.user) {
+          setUserData(response.user);
+        }
+      } catch (error) {
+        console.error("Error verifying customer:", error);
+      }
+    };
+    fetchUserData();
+    fetchImageUrl();
+  }, []);
+
+  const fetchImageUrl = async () => {
     try {
-      const response = await verifyCustomer();
-      if (response && response.user) {
-        setUserId(response.user._id);
-      } else {
-        console.error("User data not found in response:", response);
+      const response = await getCustomerIMG();
+      if (response && response.IMGurl) {
+        setIMGurl(response.IMGurl);
       }
     } catch (error) {
-      console.error("Error verifying user:", error);
+      console.error("Error fetching image URL:", error);
     }
   };
 
-  useEffect(() => {
-    verifyUser();
-  }, []);
-
-  useEffect(() => {
-    if (img) {
-      uploadFile(img);
-    }
-  }, [img]);
-
   const uploadFile = (file) => {
     const storage = getStorage(app);
-    const storageRef = ref(storage, `images/${file.name}`);
+    const storageRef = ref(storage, `Customerprofile/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -81,11 +89,10 @@ const DashboardSidebar = ({ open, setOpen }) => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          setImgUrl(downloadURL);
-          localStorage.setItem("imgUrl", downloadURL);
-          setInputs((prev) => ({ ...prev, imgurl: downloadURL }));
-          handleSubmit();
+          setIMGurl(downloadURL);
+          localStorage.setItem("IMGurl", downloadURL);
+          handleSubmit(downloadURL);
+          console.log("Image uploaded successfully to Firebase:", downloadURL);
         });
       }
     );
@@ -94,51 +101,18 @@ const DashboardSidebar = ({ open, setOpen }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImg(file);
+      uploadFile(file);
     }
   };
 
-  useEffect(() => {
-    const storedImgUrl = localStorage.getItem("imgUrl");
-    if (storedImgUrl) {
-      setImgUrl(storedImgUrl);
-    } else {
-      fetchImageUrl();
-    }
-  }, []);
-
-  const fetchImageUrl = async () => {
+  const handleSubmit = async (downloadURL) => {
     try {
-      const response = await axios.get("http://localhost:3000/api/getimg");
-      const fetchedImgUrl = response.data.IMGurl || Avatar;
-      if (fetchedImgUrl && fetchedImgUrl !== "null") {
-        setImgUrl(fetchedImgUrl);
-        localStorage.setItem("imgUrl", fetchedImgUrl);
-      } else {
-        // If not valid, set to the default avatar
-        setImgUrl(Avatar);
-        localStorage.setItem("imgUrl", Avatar);
+      const response = await uploadCustomerImage({ IMGurl: downloadURL });
+      if (response && response.createdData) {
+        fetchImageUrl();
       }
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      setImgUrl(Avatar);
-      localStorage.setItem("imgUrl", Avatar);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-
-    try {
-      const response = await axios.post("http://localhost:3000/api/addimg", {
-        IMGurl: imgUrl,
-      });
-      console.log("Image uploaded successfully:", response.data);
     } catch (error) {
       console.error("Error uploading image:", error);
-      if (error.response) {
-        console.error("Error message:", error.response.data);
-      }
     }
   };
 
@@ -173,33 +147,49 @@ const DashboardSidebar = ({ open, setOpen }) => {
           </Link>
         )}
       </Link>
-      <div className="flex flex-col items-center mt-8">
-        <img
-          src={imgUrl}
-          className={`rounded-full cursor-pointer ${
-            open ? "w-24 h-24" : "w-10 h-10"
-          }`}
-          onClick={() => setOpen(!open)}
-          alt="Avatar"
-        />
-        {open && (
-          <>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-            <button
-              type="button"
-              className="text-white hover:text-blue-500 mt-2 cursor-pointer"
-              onClick={() => fileInputRef.current.click()}
-            >
-              Add a Profile Pic
-            </button>
-          </>
-        )}
+      <div className="flex flex-col items-center mt-8 ">
+        <div
+          className="relative"
+          onMouseEnter={() => setDialogVisible(true)}
+          onMouseLeave={() => setDialogVisible(false)}
+        >
+          <img
+            src={IMGurl}
+            alt="Profile Avatar"
+            className={`rounded-full cursor-pointer ml-3 ${
+              open ? "w-24 h-24" : "w-10 h-10"
+            }`}
+            onClick={() => setOpen(!open)}
+          />
+          {open && (
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                className="text-white hover:text-blue-500 mt-2 cursor-pointer"
+                onClick={() => fileInputRef.current.click()}
+                aria-label="Upload a profile picture"
+              >
+                Add a Profile Pic
+              </button>
+            </>
+          )}
+          {dialogVisible && (
+            <div className="absolute top-0 left-[120px] w-32  mt-2 mr-2 p-2 bg-white border rounded shadow-lg z-10 cursor-pointer">
+              <h2 className="text-xs font-semibold">
+                Welcome, {UserData.fullname}
+              </h2>
+              <p className="text-[8px] mt-1">{UserData.email}</p>
+            </div>
+          )}
+        </div>
+        <ToastContainer />
       </div>
       <ul className="pt-8 space-y-2">
         <Link
