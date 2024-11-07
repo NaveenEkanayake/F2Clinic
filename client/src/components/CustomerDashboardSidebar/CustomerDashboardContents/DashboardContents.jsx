@@ -185,34 +185,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                  }}
-                >
-                  <AttachMoneyIcon />
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    align="center"
-                    component="div"
-                  >
-                    Total Pet care Expenses
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyItems: "center",
-                    marginTop: "-50px",
-                  }}
-                >
-                  <OtherExpenses />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: "-50px",
+                    marginTop: "70px",
                   }}
                 >
                   <AttachMoneyIcon />

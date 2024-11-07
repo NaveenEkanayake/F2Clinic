@@ -6,7 +6,6 @@ import Avatar from "../../assets/images/avatar.png";
 import ConsultantIcon from "../../assets/images/consultant.png";
 import Setting from "../../assets/images/settings.jpg";
 import NotificationIcon from "../../assets/images/Notification.png";
-import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkModeButton/DarkModeButton";
 import InventoryIcon from "../../assets/images/Inventory.png";
@@ -235,36 +234,6 @@ const AdminSidebar = ({ open, setOpen }) => {
                 className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
               >
                 View Consultant
-              </Link>
-            </ul>
-          )}
-        </div>
-        <div className="text-white">
-          <div
-            onClick={toggleDropdown(setIsPetRecordsOpen)}
-            className={`flex items-center py-4 px-4 hover:bg-blue-500 font-normal rounded-md cursor-pointer ${
-              !open ? "justify-center" : ""
-            }`}
-          >
-            <img
-              src={Supplies}
-              className="w-5 h-5 mr-2 invert brightness-110"
-            />
-            {open && <span>Pet Care Supplies</span>}
-          </div>
-          {isPetRecordsOpen && open && (
-            <ul className="ml-6 space-y-2">
-              <Link
-                to="/addpetcare"
-                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
-              >
-                Add Pet Care Supplies
-              </Link>
-              <Link
-                to="/viewpetcare"
-                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
-              >
-                View Pet Care Supplies
               </Link>
             </ul>
           )}

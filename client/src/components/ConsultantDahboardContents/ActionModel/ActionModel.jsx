@@ -8,16 +8,40 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { ApproveStatus } from "../../../Api/config";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ActionForm = ({ open, onClose, onSubmit, selectedRow }) => {
-  const [status, setStatus] = useState("");
-  const [description, setDescription] = useState("");
+  const [Status, setStatus] = useState(null); // Store as boolean
+  const [Description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ status, description });
-    setStatus("");
-    setDescription("");
+    setLoading(true);
+
+    ApproveStatus({ Status, Description })
+      .then((result) => {
+        console.log("Status changed successfully", result);
+        toast.success("Status changed successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error("Status change failed:", err);
+        toast.error("Status change failed.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
+      });
   };
 
   return (
@@ -31,12 +55,13 @@ const ActionForm = ({ open, onClose, onSubmit, selectedRow }) => {
         }}
       >
         <h2>Action for {selectedRow?.Doctorname}</h2>
+        <ToastContainer position="top-right" />
         <form onSubmit={handleSubmit}>
           <FormControl fullWidth margin="normal">
             <InputLabel>Status</InputLabel>
             <Select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              value={Status}
+              onChange={(e) => setStatus(e.target.value === "Approved")}
               label="Status"
             >
               <MenuItem value="Approved">Approved</MenuItem>
@@ -47,13 +72,18 @@ const ActionForm = ({ open, onClose, onSubmit, selectedRow }) => {
             label="Description"
             multiline
             rows={4}
-            value={description}
+            value={Description}
             onChange={(e) => setDescription(e.target.value)}
             fullWidth
             margin="normal"
           />
-          <Button type="submit" variant="contained" color="primary">
-            Submit
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </form>
       </div>

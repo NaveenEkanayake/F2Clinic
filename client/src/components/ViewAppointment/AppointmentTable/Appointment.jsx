@@ -15,6 +15,16 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Button from "@mui/material/Button";
+import { useEffect, useState } from "react";
+import {
+  getAllAppointments,
+  verifyCustomer,
+  deleteAppointment,
+} from "@/Api/config";
+import { useNavigate } from "react-router-dom";
+import PuffLoader from "@/components/PuffLoader/PuffLoader";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -77,79 +87,16 @@ function TablePaginationActions(props) {
     </Box>
   );
 }
-function createData(
-  doctorName,
-  timeSlot,
-  date,
-  specialConcerns,
-  ownerName,
-  email,
-  status
-) {
-  return {
-    doctorName,
-    timeSlot,
-    date,
-    specialConcerns,
-    ownerName,
-    email,
-    status,
-  };
-}
-const rows = [
-  createData(
-    "Dr. Smith",
-    "9:00 AM",
-    "2024-10-01",
-    "Allergy",
-    "John Doe",
-    "john@example.com",
-    "Scheduled"
-  ),
-  createData(
-    "Dr. Jones",
-    "10:00 AM",
-    "2024-10-01",
-    "Checkup",
-    "Jane Doe",
-    "jane@example.com",
-    "Completed"
-  ),
-  createData(
-    "Dr. Brown",
-    "11:00 AM",
-    "2024-10-01",
-    "Flu",
-    "Alice",
-    "alice@example.com",
-    "Canceled"
-  ),
-  createData(
-    "Dr. Taylor",
-    "1:00 PM",
-    "2024-10-02",
-    "Headache",
-    "Bob",
-    "bob@example.com",
-    "Scheduled"
-  ),
-  createData(
-    "Dr. Williams",
-    "2:00 PM",
-    "2024-10-02",
-    "Dental Pain",
-    "Charlie",
-    "charlie@example.com",
-    "Scheduled"
-  ),
-].sort((a, b) => (a.date < b.date ? -1 : 1));
 
 const AppointmentTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - appointments.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -160,58 +107,136 @@ const AppointmentTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
+  const handleDelete = async (rowIndex) => {
+    const appointmentsToDelete = appointments[rowIndex];
+    try {
+      await deleteAppointment(appointmentsToDelete._id);
+      setAppointments((prev) => prev.filter((_, index) => index !== rowIndex));
+      console.log("Deleted Appointment:", appointmentsToDelete);
+      toast.success("Appointment deleted successfully!", {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      console.error("Error deleting Appointment:", error);
+      toast.error("Failed to delete Appointment. Please try again.", {
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
+    const appointmentToUpdate = appointments[rowIndex];
+    navigate(`/UpdateAppointment/${appointmentToUpdate._id}`);
   };
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const UserResponse = await verifyCustomer();
+        if (!UserResponse) {
+          console.error("User verification failed.");
+          return;
+        }
+
+        const results = await getAllAppointments();
+        if (results && results.retrievedData) {
+          const formattedRows = results.retrievedData.map((Data) => ({
+            _id: Data._id,
+            Doctorname: Data.Doctorname,
+            Date: Data.Date,
+            Time: Data.Time,
+            SpecialConcern: Data.SpecialConcern,
+            OwnerName: Data.OwnerName,
+            OwnerEmail: Data.OwnerEmail,
+            Status: Data.Status,
+          }));
+          setAppointments(formattedRows);
+        } else {
+          console.error("No appointments found.");
+        }
+      } catch (err) {
+        console.error("Error fetching appointments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <PuffLoader size={80} color="#5BAAEC" loading={loading} />
+      </Box>
+    );
+  }
 
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <ToastContainer position="top-right" />
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
-          {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row, index) => (
-            <TableRow key={row.doctorName}>
-              <TableCell component="th" scope="row">
-                {row.doctorName}
-              </TableCell>
-              <TableCell align="right">{row.timeSlot}</TableCell>
-              <TableCell align="right">{row.date}</TableCell>
-              <TableCell align="right">{row.specialConcerns}</TableCell>
-              <TableCell align="right">{row.ownerName}</TableCell>
-              <TableCell align="right">{row.email}</TableCell>
-              <TableCell align="right">{row.status}</TableCell>
-              <TableCell align="right">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleUpdate(index)}
-                  style={{ marginRight: 10 }}
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(index)}
-                >
-                  Delete
-                </Button>
+          {appointments.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <p>No appointments to display.</p>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            (rowsPerPage > 0
+              ? appointments.slice(
+                  page * rowsPerPage,
+                  page * rowsPerPage + rowsPerPage
+                )
+              : appointments
+            ).map((appointment, index) => (
+              <TableRow key={appointment._id}>
+                <TableCell component="th" scope="row">
+                  {`DR. ${appointment.Doctorname.join(", ")}`}
+                </TableCell>
+                <TableCell align="right">{appointment.Date}</TableCell>
+                <TableCell align="right">{appointment.Time}</TableCell>
+                <TableCell align="right">
+                  {appointment.SpecialConcern}
+                </TableCell>
+                <TableCell
+                  align="right"
+                  style={{
+                    color: appointment.Status ? "green" : "red",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {appointment.Status ? "Approved" : "Not Approved"}
+                </TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdate(index)}
+                    style={{ marginRight: 10 }}
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(index)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
 
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={8} />
+              <TableCell colSpan={5} />
             </TableRow>
           )}
         </TableBody>
@@ -219,8 +244,8 @@ const AppointmentTable = () => {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={8}
-              count={rows.length}
+              colSpan={6}
+              count={appointments.length}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{

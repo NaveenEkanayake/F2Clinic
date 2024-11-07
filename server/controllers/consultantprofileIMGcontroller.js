@@ -1,16 +1,17 @@
 const ConsultantProfileIMG = require("../models/consultantprofile");
 
 const createImg = async(req, res) => {
-    const consultantId = req.id;
-    const { IMGurl } = req.body;
-    if (!IMGurl) {
+    const ConsultantId = req.id;
+    const { ConsultantUrl } = req.body;
+
+    if (!ConsultantUrl) {
         return res.status(400).json({ message: "Image URL is required." });
     }
 
     try {
         const createdImg = await ConsultantProfileIMG.create({
-            consultantId,
-            IMGurl,
+            ConsultantId,
+            ConsultantUrl,
         });
 
         res.status(201).json({
@@ -20,24 +21,30 @@ const createImg = async(req, res) => {
         console.log(createdImg);
     } catch (error) {
         console.error("Error saving image:", error);
-        res
-            .status(500)
-            .json({ message: "Failed to upload image. Please try again later." });
+        res.status(500).json({
+            message: "Failed to upload image. Please try again later.",
+            error: error.message,
+        });
     }
 };
 
 const getIMGURL = async(req, res) => {
-    const consultantId = req.id;
+    const ConsultantId = req.id;
 
     try {
-        const response = await ConsultantProfileIMG.findOne({ consultantId });
+        const response = await ConsultantProfileIMG.findOne({ ConsultantId })
+            .sort({ createdAt: -1 })
+            .exec();
+
+        console.log(response);
 
         if (!response) {
             return res.status(404).json({ message: "Image not found." });
         }
+
         res.status(200).json({
             message: "Image retrieved successfully.",
-            response,
+            ConsultantUrl: response.ConsultantUrl,
         });
     } catch (err) {
         console.error("Error retrieving image:", err);
@@ -47,4 +54,5 @@ const getIMGURL = async(req, res) => {
         });
     }
 };
+
 module.exports = { createImg, getIMGURL };

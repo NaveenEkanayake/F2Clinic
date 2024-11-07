@@ -12,7 +12,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: process.env.CLIENT_PORT,
-        methods: ["GET", "POST"],
         credentials: true,
     },
 });
@@ -29,7 +28,6 @@ io.on("connection", (socket) => {
 app.use(
     cors({
         origin: process.env.CLIENT_PORT,
-        methods: ["GET", "POST"],
         credentials: true,
     })
 );
@@ -53,7 +51,8 @@ const adminprofileRoute = require("./router/adminprofile.route");
 const ConsultantProfileRoute = require("./router/consultantIMG.route");
 const PetcareSupplyRoute = require("./router/petcaresupply.route");
 const NotificationRoute = require("./router/notification.route");
-
+const ContactUserRoute = require("./router/contactus.route");
+const ApprovalRoute = require("./router/approval.route");
 // Use Routes
 app.use("/api", PetRecordRoute);
 app.use("/api", ConsultantRoute);
@@ -67,13 +66,15 @@ app.use("/api", adminprofileRoute);
 app.use("/api", ConsultantProfileRoute);
 app.use("/api", PetcareSupplyRoute);
 app.use("/api", NotificationRoute);
+app.use("/api", ContactUserRoute);
+app.use("/api", ApprovalRoute);
 
 // Connect to MongoDB
 const MONGODB_URL = process.env.MONGODB_URL;
 const PORT = process.env.PORT || 3000;
 
 mongoose
-    .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(MONGODB_URL)
     .then(() => {
         console.log("Successfully connected to the database");
         server.listen(PORT, () => {

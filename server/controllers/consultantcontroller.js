@@ -12,15 +12,12 @@ const { ObjectId } = mongoose.Types;
 
 const addConsultant = async(req, res) => {
     const { firstname, lastname, speciality, email, telephoneNumber } = req.body;
-    const adminId = req.id; // Make sure req.id is set appropriately
+    const adminId = req.id;
 
     try {
-        // Check for required fields
         if (!firstname || !lastname || !speciality || !email) {
             return res.status(400).json({ message: "All fields are required." });
         }
-
-        // Check if a consultant with the same email already exists
         const existingConsultant = await ConsultantLogin.findOne({ email });
         if (existingConsultant) {
             return res.status(400).json({
@@ -28,24 +25,16 @@ const addConsultant = async(req, res) => {
                 consultant: existingConsultant,
             });
         }
-
-        // Generate a random password and hash it
         const generatedPassword = randomize("Aa0", 8);
         const hashedPassword = await bcrypt.hash(generatedPassword, 10);
         const fullName = `${firstname} ${lastname}`;
-
-        // Create a new ConsultantLogin document
         const consultantLogin = new ConsultantLogin({
             fullname: fullName,
             email,
             password: hashedPassword,
             role: "consultant",
         });
-
-        // Save the consultant login to the database
         await consultantLogin.save();
-
-        // Create a new ConsultantModel document
         const newConsultant = new ConsultantModel({
             firstname,
             lastname,
@@ -54,11 +43,7 @@ const addConsultant = async(req, res) => {
             telephoneNumber,
             adminId,
         });
-
-        // Save the consultant details to the database
         await newConsultant.save();
-
-        // Send a welcome email to the new consultant
         await sendMail(
             email,
             "Welcome to Furry Pet Clinic!",
@@ -66,8 +51,6 @@ const addConsultant = async(req, res) => {
             speciality,
             generatedPassword
         );
-
-        // Emit notification through socket.io
         if (req.io) {
             req.io.emit("addConsultantNotification", {
                 message: `${firstname} ${lastname} has been added as a new consultant.`,
@@ -75,8 +58,6 @@ const addConsultant = async(req, res) => {
         } else {
             console.error("Socket instance is not available.");
         }
-
-        // Return success response
         return res
             .status(201)
             .json({ message: "Consultant added successfully!", newConsultant });
@@ -114,6 +95,32 @@ const getAllConsultants = async(req, res) => {
     }
 };
 
+const getAllDoctors = async(req, res) => {
+    const UserId = req.id;
+
+    try {
+        if (!UserId) {
+            res.status(400).json({
+                message: "User id not found",
+            });
+        }
+        const allConsultants = await ConsultantModel.find({});
+
+        if (allConsultants.length === 0) {
+            return res.status(404).json({ message: "No consultants found." });
+        }
+
+        res.status(200).json({
+            message: "Data retrieved successfully",
+            retrievedData: allConsultants,
+        });
+    } catch (error) {
+        console.error("Get All Consultants error:", error.message);
+        res.status(500).json({
+            message: "Internal server error.",
+        });
+    }
+};
 const getConsultantCount = async(req, res) => {
     try {
         const allRegisteredConsultant = await ConsultantModel.find({});
@@ -133,28 +140,26 @@ const getConsultantCount = async(req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
-
-const getAllConsultantNames = async(req, res) => {
+const getAllConsultantNames = async() => {
     try {
+        console.log("Fetching consultant names...");
         const allConsultants = await ConsultantModel.find({}, "firstname lastname");
 
+        console.log("Consultants found:", allConsultants);
+
         if (allConsultants.length === 0) {
-            return { message: "No consultants found.", consultants: [] };
+            return [];
         }
+        const consultantNames = allConsultants.map(
+            (consultant) => `Dr. ${consultant.firstname} ${consultant.lastname}`
+        );
 
-        const consultantNames = allConsultants.map((consultant) => {
-            return `Dr. ${consultant.firstname} ${consultant.lastname}`;
-        });
-
-        return {
-            message: "Consultants retrieved successfully",
-            consultants: consultantNames,
-        };
+        return consultantNames;
     } catch (err) {
-        throw new Error(err.message);
+        console.error("Error fetching consultants:", err);
+        throw new Error("Failed to fetch consultant names");
     }
 };
-
 const getConsultantById = async(req, res) => {
     const adminId = req.id;
     const { id } = req.params;
@@ -265,4 +270,5 @@ module.exports = {
     deleteConsultant,
     getAllConsultantNames,
     getConsultantCount,
+    getAllDoctors,
 };

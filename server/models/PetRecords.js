@@ -18,7 +18,7 @@ const petrecordSchema = new mongoose.Schema({
         required: false,
     },
     Count: {
-        type: Number, // Remove default: 0
+        type: Number,
     },
     UserId: {
         type: mongoose.Schema.Types.ObjectId,

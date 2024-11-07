@@ -5,11 +5,16 @@ import Bell from "../../assets/images/bell.png";
 
 const CustomerNotification = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [notificationsCount, setNotificationsCount] = useState(0);
 
   return (
     <div className="flex h-screen">
       <div className="flex-none">
-        <DashboardSidebar open={isSidebarOpen} setOpen={setIsSidebarOpen} />
+        <DashboardSidebar
+          notificationsCount={notificationsCount}
+          open={isSidebarOpen}
+          setOpen={setIsSidebarOpen}
+        />
       </div>
       <div className="flex-grow">
         <div className="flex items-center ml-5">
@@ -23,7 +28,10 @@ const CustomerNotification = () => {
             Notifications
           </h1>
         </div>
-        <CustomerNotificationContent isSidebarOpen={isSidebarOpen} />
+        <CustomerNotificationContent
+          setNotificationsCount={setNotificationsCount}
+          isSidebarOpen={isSidebarOpen}
+        />
       </div>
     </div>
   );

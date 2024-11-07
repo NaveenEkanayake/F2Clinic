@@ -3,11 +3,75 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
+import {
+  verifyconsultant,
+  getAllConsultantAppointment,
+  getAppointmentStatus,
+} from "../../Api/config";
 
 import AppointmentTable from "./AppointmentTable/AppointmentTable";
 const ConsultantDashboardContents = () => {
+  const [countedAppointments, setCountedAppointments] = useState({
+    totalCount: 0,
+  });
+  const [countedApprovalCount, setCountedApprovalCount] = useState({
+    totalCount: 0,
+  });
+  const [countedRejectedCount, setCountedRejectedCount] = useState({
+    totalCount: 0,
+  });
+  useEffect(() => {
+    const fetchAllAppointmentCount = async () => {
+      try {
+        const ConsultantId = verifyconsultant();
+        if (!ConsultantId) {
+          console.log("Consultant ID not found.");
+        }
+
+        const AppointmentCount = await getAllConsultantAppointment();
+        console.log("Appointment Count Response:", AppointmentCount);
+        setCountedAppointments({
+          totalCount: AppointmentCount.appointmentCount,
+        });
+      } catch (err) {
+        console.error("Error fetching Customercount:", err);
+      }
+    };
+
+    fetchAllAppointmentCount();
+  }, []);
+
+  useEffect(() => {
+    const fetchAllAppointmentStatus = async () => {
+      try {
+        const ConsultantId = verifyconsultant();
+        if (!ConsultantId) {
+          console.log("Consultant ID not found.");
+          return;
+        }
+
+        // Fetch the appointment status
+        const AppointmentStatus = await getAppointmentStatus();
+        console.log("Appointment Status Response:", AppointmentStatus);
+
+        // Ensure you're using the correct keys from the response
+        setCountedApprovalCount({
+          totalCount: AppointmentStatus.ApprovalCount || 0,
+        });
+
+        setCountedRejectedCount({
+          totalCount: AppointmentStatus.RejectCount || 0,
+        });
+      } catch (err) {
+        console.error("Error fetching AppointmentStatus:", err);
+      }
+    };
+
+    fetchAllAppointmentStatus();
+  }, []);
+
   return (
     <>
       <Box sx={{ height: 20 }} />
@@ -49,7 +113,7 @@ const ConsultantDashboardContents = () => {
                   sx={{ color: "text.secondary" }}
                   mt={4}
                 >
-                  1
+                  {countedAppointments.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
@@ -90,7 +154,7 @@ const ConsultantDashboardContents = () => {
                   mt={4}
                   sx={{ color: "text.secondary" }}
                 >
-                  1
+                  {countedApprovalCount.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>
@@ -131,7 +195,7 @@ const ConsultantDashboardContents = () => {
                   sx={{ color: "text.secondary" }}
                   mt={4}
                 >
-                  1
+                  {countedRejectedCount.totalCount || 0}
                 </Typography>
               </CardContent>
             </Card>

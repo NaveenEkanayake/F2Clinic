@@ -1,12 +1,45 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ContactusSVG from "../ContactusSVG/ContactusSVG";
+import { AddMessage } from "@/Api/config";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import SubmitButton from "./ContactusSubmitButton/SubmitButton";
 
 const ContactUsContent = () => {
+  const navigate = useNavigate();
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    console.log("Form Data Submitted:", formData);
+    AddMessage({ fullname, email, message })
+      .then((result) => {
+        console.log("Message Created successfully", result);
+        toast.success("Message Created successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          navigate("/customerdashboard");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error("Message creation failed:", err);
+        toast.error("Message creation failed.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
+      });
   };
 
   return (
@@ -38,7 +71,9 @@ const ContactUsContent = () => {
               <label className="text-white font-semibold">Full Name</label>
               <input
                 type="text"
-                name="fullName"
+                name="fullname"
+                value={fullname}
+                onChange={(e) => setFullname(e.target.value)}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter your full name"
                 required
@@ -49,6 +84,8 @@ const ContactUsContent = () => {
               <input
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter your email"
                 required
@@ -58,18 +95,15 @@ const ContactUsContent = () => {
               <label className="text-white font-semibold">Message</label>
               <textarea
                 name="message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
                 placeholder="Enter your message"
                 rows="5"
                 required
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="mt-5 py-2 px-6 border-2 text-center border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg"
-            >
-              Submit
-            </button>
+            <SubmitButton loading={loading}>Submit</SubmitButton>
           </form>
         </motion.div>
       </div>

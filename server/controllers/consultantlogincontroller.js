@@ -79,6 +79,7 @@ const verifyConsultantToken = (req, res, next) => {
         req.id = decodedConsultant.id;
         req.email = decodedConsultant.email;
         req.fullname = decodedConsultant.fullname;
+        console.log("Decoded Consultant Data:", decodedConsultant);
         next();
     } catch (err) {
         console.error("Token verification error:", err.message);

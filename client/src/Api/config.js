@@ -54,10 +54,10 @@ export const verifyconsultant = async() => {
         if (error.response && error.response.status === 403) {
             try {
                 await refreshToken();
-                const retryResponse = await axios.get(`${BASE_URL}/verifyadmin`, {
+                const retryResponse = await axios.get(`${BASE_URL}/refreshConsultant`, {
                     withCredentials: true,
                 });
-                console.log("Retry Response from /verifyadmin:", retryResponse);
+                console.log("Retry Response from /refreshConsultant:", retryResponse);
                 return retryResponse.data;
             } catch (refreshError) {
                 console.error("Error during token refresh:", refreshError.message);
@@ -318,7 +318,7 @@ export const getAppointmentCount = async() => {
 
 export const getPetRecordCount = async() => {
     try {
-        const response = await axios.get(`${BASE_URL}/getPetRecordByID/:id`, {
+        const response = await axios.get(`${BASE_URL}/getcountPetRecord`, {
             withCredentials: true,
         });
         return response.data;
@@ -329,22 +329,23 @@ export const getPetRecordCount = async() => {
 };
 export const getAllConsultantNames = async() => {
     try {
-        const response = await axios.get(`${BASE_URL}/getAllConsultantNames`, {
+        const response = await axios.get(`${BASE_URL}/getConsultantnames`, {
             withCredentials: true,
         });
         return response.data;
     } catch (error) {
-        console.error("Error fetching  ConsultantNames:", error);
+        console.error("Error fetching Consultant Names:", error);
         throw error;
     }
 };
 
 export const addAppointment = async(data) => {
     try {
-        const addAppointment = await axios.post(`${BASE_URL}/Appointment`, data);
+        const addAppointment = await axios.post(`${BASE_URL}/addAppointment`, data);
         return addAppointment.data;
     } catch (error) {
-        console.log(error);
+        console.error("Error adding appointment:", error);
+        throw error;
     }
 };
 
@@ -490,5 +491,253 @@ export const SendConsultantNotification = async(data) => {
         return SendNotification.data;
     } catch (error) {
         console.log(error);
+    }
+};
+
+export const addPetRecords = async(data) => {
+    try {
+        const addPetRecords = await axios.post(`${BASE_URL}/AddPetRecords`, data);
+        return addPetRecords.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getAllPetRecords = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllPetRecord`, {
+            withCredentials: true,
+        });
+        console.log("Fetched Pet Records:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching All Pet Records:", error.message || error);
+        throw error;
+    }
+};
+
+export const deletepetRecords = async(id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/DeletePetRecord/${id}`);
+        if (response.status === 200) {
+            console.log("Pet Record deleted successfully:", response.data);
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting Pet Records:", error);
+        throw error;
+    }
+};
+
+export const UpdatePetRecord = async(id, data) => {
+    try {
+        const response = await axios.put(`${BASE_URL}/UpdatePetRecord/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating Pet Records:", error);
+        throw error;
+    }
+};
+
+export const getPetRecordById = async(id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getPetRecordByid/${id}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching PetcareSupply by ID:", error);
+        throw error;
+    }
+};
+
+export const getAllAppointments = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllAppointment`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching  Appointments:", error);
+        throw error;
+    }
+};
+
+export const UpdateAppointment = async(id, data) => {
+    try {
+        const response = await axios.put(
+            `${BASE_URL}/updateAppointment/${id}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error updating Appointment:", error);
+        throw error;
+    }
+};
+
+export const getAppointmentById = async(id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAppointmentById/${id}`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Appointment by ID:", error);
+        throw error;
+    }
+};
+
+export const deleteAppointment = async(id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/deleteAppointment/${id}`);
+        if (response.status === 200) {
+            console.log("Appointment  deleted successfully:", response.data);
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting Appointment :", error);
+        throw error;
+    }
+};
+export const getAllNotifications = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllCustomerMessages`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Notifications :", error);
+        throw error;
+    }
+};
+
+export const ISReadAllNotifications = async() => {
+    try {
+        const response = await axios.patch(
+            `${BASE_URL}/updateCustomerNotifications`, {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error updating notifications:", error);
+        throw error;
+    }
+};
+
+export const AddMessage = async(data) => {
+    try {
+        const AddMessage = await axios.post(`${BASE_URL}/MakeContact`, data);
+        return AddMessage.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getAllDoctors = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllDoctors`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching  Doctors :", error);
+        throw error;
+    }
+};
+
+export const getAllAppointmentPrices = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/appointmenttotal`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching  Prices :", error);
+        throw error;
+    }
+};
+
+export const uploadConsultantImage = async(imageData) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/addConsultantimg`,
+            imageData, {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error uploading Consultant image:", error);
+    }
+};
+
+export const getConsultantIMG = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getConsultantIMG`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error retrieving Consultant image:", error);
+    }
+};
+
+export const getAllConsultantAppointment = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllAppointmentCount`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error retrieving Appointments:", error);
+    }
+};
+
+export const getConsultantAppointment = async() => {
+    try {
+        const response = await axios.get(
+            `${BASE_URL}/getAllConsultantAppointments`, {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error retrieving Appointments:", error);
+    }
+};
+
+export const ApproveStatus = async(data) => {
+    try {
+        const AddMessage = await axios.post(`${BASE_URL}/addApprove`, data);
+        return AddMessage.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const getAppointmentStatus = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getStatus`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error retrieving Appointments:", error);
+    }
+};
+
+export const getAllConsultantNotifications = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllConsultantMessages`, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Notifications :", error);
+        throw error;
     }
 };

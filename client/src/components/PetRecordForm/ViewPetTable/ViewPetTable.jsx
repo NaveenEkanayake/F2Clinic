@@ -1,24 +1,36 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
-import Button from "@mui/material/Button";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TablePagination,
+  TableRow,
+  Paper,
+  IconButton,
+  Button,
+} from "@mui/material";
+import {
+  FirstPage as FirstPageIcon,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage as LastPageIcon,
+} from "@mui/icons-material";
+import PuffLoader from "react-spinners/PuffLoader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  verifyCustomer,
+  deletepetRecords,
+  getAllPetRecords,
+} from "@/Api/config";
+import { useNavigate } from "react-router-dom";
 
-function TablePaginationActions(props) {
+const TablePaginationActions = ({ count, page, rowsPerPage, onPageChange }) => {
   const theme = useTheme();
-  const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleFirstPageButtonClick = (event) => {
     onPageChange(event, 0);
@@ -76,23 +88,14 @@ function TablePaginationActions(props) {
       </IconButton>
     </Box>
   );
-}
-
-function createData(petName, petImage, age, breed) {
-  return { petName, petImage, age, breed };
-}
-
-const rows = [
-  createData("Buddy", "https://via.placeholder.com/50", 3, "Golden Retriever"),
-  createData("Max", "https://via.placeholder.com/50", 5, "Bulldog"),
-  createData("Bella", "https://via.placeholder.com/50", 2, "Beagle"),
-  createData("Rocky", "https://via.placeholder.com/50", 4, "German Shepherd"),
-  createData("Lucy", "https://via.placeholder.com/50", 1, "Poodle"),
-].sort((a, b) => (a.petName < b.petName ? -1 : 1));
+};
 
 const ViewPetTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -106,35 +109,118 @@ const ViewPetTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
+  const handleDelete = async (rowIndex) => {
+    const petRecordToDelete = rows[rowIndex];
+
+    if (!petRecordToDelete) {
+      console.error("No Pet Record found at this index.");
+      return;
+    }
+
+    try {
+      console.log("Deleting Pet Record:", petRecordToDelete);
+      const response = await deletepetRecords(petRecordToDelete._id);
+      if (response && response.message) {
+        console.log(response.message);
+      }
+      const newRows = rows.filter((_, index) => index !== rowIndex);
+      setRows(newRows);
+      toast.success("Pet Record deleted successfully!", { autoClose: 3000 });
+    } catch (error) {
+      console.error("Error deleting Pet Record:", error);
+      toast.error("Failed to delete Pet Record. Please try again.", {
+        autoClose: 3000,
+      });
+    }
   };
 
   const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
+    const petRecordToUpdate = rows[rowIndex];
+    navigate(`/updatePetRecord/${petRecordToUpdate._id}`);
   };
+
+  useEffect(() => {
+    const fetchPetRecords = async () => {
+      setLoading(true);
+      try {
+        const customerResponse = await verifyCustomer();
+        console.log("Customer Response:", customerResponse);
+
+        if (!customerResponse) {
+          console.error("Customer verification failed.");
+          return;
+        }
+        const userId = customerResponse.id;
+        const results = await getAllPetRecords(userId);
+        console.log("Pet Record Results:", results);
+
+        if (
+          results &&
+          results.Retrieveddata &&
+          results.Retrieveddata.length > 0
+        ) {
+          const formattedRows = results.Retrieveddata.map((record) => ({
+            _id: record._id,
+            Petname: record.Petname,
+            Petimage: record.Petimage,
+            Breed: record.Breed,
+            Age: record.Age,
+          }));
+          setRows(formattedRows);
+        } else {
+          console.error("No Pet Records found.");
+        }
+      } catch (error) {
+        console.error("Error fetching Pet Records:", error.response || error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPetRecords();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <PuffLoader size={80} color="#5BAAEC" loading={loading} />
+      </Box>
+    );
+  }
 
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <ToastContainer position="top-right" />
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
-          {rows
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => (
-              <TableRow key={row.petName}>
-                <TableCell align="left">{row.petName}</TableCell>
-                <TableCell align="right">
+          {rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <p>There are no Pet Records to display.</p>
+              </TableCell>
+            </TableRow>
+          ) : (
+            rows.map((row, index) => (
+              <TableRow key={row._id}>
+                <TableCell component="th" scope="row">
                   <img
-                    src={row.petImage}
-                    alt={row.petName}
-                    style={{ width: 50, height: 50, borderRadius: "50%" }}
+                    src={row.Petimage}
+                    alt={row.Petname}
+                    style={{ width: 50, height: 50 }}
                   />
                 </TableCell>
-                <TableCell align="right">{row.age} years</TableCell>
-                <TableCell align="right">{row.breed}</TableCell>
+                <TableCell component="th" scope="row">
+                  {row.Petname}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.Breed}
+                </TableCell>
+                <TableCell align="right">{row.Age}</TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"
@@ -153,19 +239,14 @@ const ViewPetTable = () => {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))}
-
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={12} />
-            </TableRow>
+            ))
           )}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={12}
+              colSpan={5}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}

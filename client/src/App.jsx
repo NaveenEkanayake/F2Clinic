@@ -11,15 +11,12 @@ import AppointmentForm from "./components/CustomerDashboardSidebar/AppointmentFo
 import ViewAppointment from "./components/ViewAppointment/ViewAppointments";
 import PetRecordForm from "./components/PetRecordForm/PetRecordForm";
 import ViewPetRecords from "./components/PetRecordForm/ViewPetRecords/ViewPetRecords";
-import PetCareSupplies from "./components/PetCareSupplies/PetCareSupplies";
 import CustomerNotification from "./components/CustomerNotification/CustomerNotification";
 import CustomerContactUs from "./components/CustomerContactus/Customercontactus";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import AddConsultantForm from "./components/AdminContents/AddConsultantForm/AddConsultantForm";
 import ViewConsultant from "./components/AdminContents/ViewConsultant/ViewConsultant";
 import AdminNotification from "./components/AdminContents/AdminNotification/AdminNotification/AdminNotification";
-import AddPetCareMain from "./components/AdminContents/AddPetcareMain/AddPetCareMain";
-import ViewPetCare from "./components/AdminContents/AddPetCare/ViewPetCare/ViewPetCare";
 import InventoryForm from "./components/AdminContents/AddInventory/InventoryForm";
 import ViewInventory from "./components/AdminContents/ViewInventory/ViewInventory";
 import ConsultantDashboard from "./pages/ConsultantDashboard/ConsultantDasahboard";
@@ -30,7 +27,10 @@ import UpdateConsultantForm from "./components/UpdateConsultantForm/UpdateConsul
 import UpdateInventoryForm from "./components/UpdateInventoryForm/UpdateInventoryForm";
 import UpdatePetCareForm from "./components/UpdatePetCareSupply/UpdatePetCareForm";
 import CreateNotificationForm from "./components/AdminCreateNotification/CreateNotificationForm";
-
+import UpdatePetRecordForm from "./components/UpdatePetRecordForm/UpdatePetRecordForm";
+import PaymentForm from "./components/CustomerDashboardSidebar/AppointmentForm/Payment/PaymentForm";
+import UpdateAppointmentContent from "./components/UpdateAppointment/UpdateAppointmentContent/UpdateAppointmentContent";
+import ConsultantNotification from "./components/ConsultantNotifiaction/Notifiaction";
 const withLoading = (Component) => {
   return function WithLoadingComponent(props) {
     const [loading, setLoading] = useState(true);
@@ -62,7 +62,6 @@ function App() {
   const LoadingViewAppointment = withLoading(ViewAppointment);
   const LoadingPetRecordForm = withLoading(PetRecordForm);
   const LoadingViewPetRecords = withLoading(ViewPetRecords);
-  const LoadingPetCareSupplies = withLoading(PetCareSupplies);
   const LoadingCustomerNotification = withLoading(CustomerNotification);
   const LoadingCustomerContactUs = withLoading(CustomerContactUs);
   const LoadingAdminLogin = withLoading(AdminLogin);
@@ -70,8 +69,6 @@ function App() {
   const LoadingAddConsultantForm = withLoading(AddConsultantForm);
   const LoadingViewConsultant = withLoading(ViewConsultant);
   const LoadingAdminNotification = withLoading(AdminNotification);
-  const LoadingAddPetCareMain = withLoading(AddPetCareMain);
-  const LoadingViewPetCare = withLoading(ViewPetCare);
   const LoadingInventoryForm = withLoading(InventoryForm);
   const LoadingViewInventory = withLoading(ViewInventory);
   const LoadingConsultantLogin = withLoading(ConsultantLogin);
@@ -80,6 +77,10 @@ function App() {
   const LoadingUpdateInventoryForm = withLoading(UpdateInventoryForm);
   const LoadingUpdatePetcareForm = withLoading(UpdatePetCareForm);
   const LoadingCreateNotificationForm = withLoading(CreateNotificationForm);
+  const LoadingUpdatePetRecordForm = withLoading(UpdatePetRecordForm);
+  const LoadingPaymentRecordForm = withLoading(PaymentForm);
+  const LoadingUpdateAppointmentForm = withLoading(UpdateAppointmentContent);
+  const LoadingNotification = withLoading(ConsultantNotification);
 
   return (
     <Routes>
@@ -92,7 +93,6 @@ function App() {
       <Route path="/viewappointment" element={<LoadingViewAppointment />} />
       <Route path="/petRecord" element={<LoadingPetRecordForm />} />
       <Route path="/viewpetRecord" element={<LoadingViewPetRecords />} />
-      <Route path="/petcaresupplies" element={<LoadingPetCareSupplies />} />
       <Route path="/Notification" element={<LoadingCustomerNotification />} />
       <Route path="/contactus" element={<LoadingCustomerContactUs />} />
       <Route path="/adminlogin" element={<LoadingAdminLogin />} />
@@ -100,11 +100,18 @@ function App() {
       <Route path="/addconsultant" element={<LoadingAddConsultantForm />} />
       <Route path="/viewconsultant" element={<LoadingViewConsultant />} />
       <Route path="/adminNotification" element={<LoadingAdminNotification />} />
-      <Route path="/addpetcare" element={<LoadingAddPetCareMain />} />
-      <Route path="/viewpetcare" element={<LoadingViewPetCare />} />
       <Route path="/Inventory" element={<LoadingInventoryForm />} />
       <Route path="/ViewInventory" element={<LoadingViewInventory />} />
       <Route path="/ConsultantLogin" element={<LoadingConsultantLogin />} />
+      <Route
+        path="/UpdateAppointment/:id"
+        element={<LoadingUpdateAppointmentForm />}
+      />
+      <Route path="/ConsultantNotifiaction" element={<LoadingNotification />} />
+      <Route
+        path="/AppointmentPayment"
+        element={<LoadingPaymentRecordForm />}
+      />
       <Route
         path="/updateConsultantForm/:id"
         element={<LoadingUpdateConsultantForm />}
@@ -116,6 +123,10 @@ function App() {
       <Route
         path="/updatePetcareSupply/:id"
         element={<LoadingUpdatePetcareForm />}
+      />
+      <Route
+        path="/updatePetRecord/:id"
+        element={<LoadingUpdatePetRecordForm />}
       />
       <Route
         path="/Consultantdashboard"

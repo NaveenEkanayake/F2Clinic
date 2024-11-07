@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,60 +8,15 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import ActionModel from "../ActionModel/ActionModel";
+import {
+  verifyconsultant,
+  getConsultantAppointment,
+} from "../../../Api/config";
 
-function createData(Doctorname, Date, Time, Status, UserId, OwnerName, Email) {
-  return { Doctorname, Date, Time, Status, UserId, OwnerName, Email };
-}
-const rows = [
-  createData(
-    "Dr. John Doe",
-    "2024-10-22",
-    "10:00 AM",
-    false,
-    "12345",
-    "Alice Smith",
-    "alice@example.com"
-  ),
-  createData(
-    "Dr. Jane Smith",
-    "2024-10-23",
-    "11:00 AM",
-    false,
-    "67890",
-    "Bob Johnson",
-    "bob@example.com"
-  ),
-  createData(
-    "Dr. Mike Johnson",
-    "2024-10-24",
-    "09:00 AM",
-    false,
-    "54321",
-    "Cathy Lee",
-    "cathy@example.com"
-  ),
-  createData(
-    "Dr. Emily Davis",
-    "2024-10-25",
-    "02:00 PM",
-    false,
-    "98765",
-    "David Brown",
-    "david@example.com"
-  ),
-  createData(
-    "Dr. Sarah Wilson",
-    "2024-10-26",
-    "03:00 PM",
-    false,
-    "11223",
-    "Ella White",
-    "ella@example.com"
-  ),
-];
 export default function AppointmentTable() {
   const [openModal, setOpenModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [appointments, setAppointments] = useState([]); // New state to store appointments
 
   const handleOpenModal = (row) => {
     setSelectedRow(row);
@@ -78,6 +33,25 @@ export default function AppointmentTable() {
     handleCloseModal();
   };
 
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const ConsultantId = verifyconsultant();
+        if (!ConsultantId) {
+          console.log("ConsultantId not found.");
+        }
+
+        const appointmentsData = await getConsultantAppointment();
+        console.log("Appointments  Response:", appointmentsData);
+        setAppointments(appointmentsData);
+      } catch (err) {
+        console.error("Error fetching Appointments:", err);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -89,21 +63,25 @@ export default function AppointmentTable() {
               <TableCell align="right">Time</TableCell>
               <TableCell align="right">Status</TableCell>
               <TableCell align="right">Owner Name</TableCell>
-              <TableCell align="right">Email</TableCell>
+              <TableCell align="right">Owner Email</TableCell>
               <TableCell align="right">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {appointments.map((row) => (
               <TableRow key={row.UserId}>
                 <TableCell>{row.Doctorname}</TableCell>
                 <TableCell align="right">{row.Date}</TableCell>
                 <TableCell align="right">{row.Time}</TableCell>
                 <TableCell align="right">
-                  {row.Status ? "Approved" : "Pending"}
+                  {row.Status === true
+                    ? "Approved"
+                    : row.Status === false
+                    ? "Rejected"
+                    : "Pending"}
                 </TableCell>
                 <TableCell align="right">{row.OwnerName}</TableCell>
-                <TableCell align="right">{row.Email}</TableCell>
+                <TableCell align="right">{row.OwnerEmail}</TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"

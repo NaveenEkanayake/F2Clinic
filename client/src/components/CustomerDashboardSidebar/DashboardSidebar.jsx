@@ -7,7 +7,6 @@ import PetRecordsIcon from "../../assets/images/Records.jpg";
 import Setting from "../../assets/images/settings.jpg";
 import Logout from "../../assets/images/Logout.webp";
 import Notification from "../../assets/images/Notification.png";
-import Supplies from "../../assets/images/PetEssentials.webp";
 import HomeIcon from "../../assets/images/Home.png";
 import DarkModeButton from "./DarkmodeButton/DarkModeButton";
 import ContactUs from "../../assets/images/ContactUs.png";
@@ -22,6 +21,8 @@ import {
   verifyCustomer,
   uploadCustomerImage,
   getCustomerIMG,
+  getAllNotifications,
+  ISReadAllNotifications,
 } from "../../Api/config";
 import Avatar from "../../assets/images/avatar.png";
 import { ToastContainer } from "react-toastify";
@@ -30,7 +31,8 @@ import "react-toastify/dist/ReactToastify.css";
 const DashboardSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
-  const [notificationsCount, setNotificationsCount] = useState(1);
+  const [notificationsCount, setNotificationsCount] = useState(0);
+  const [notifications, setNotifications] = useState([]);
   const [img, setImg] = useState(null);
   const [inputs, setInputs] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -113,6 +115,39 @@ const DashboardSidebar = ({ open, setOpen }) => {
       }
     } catch (error) {
       console.error("Error uploading image:", error);
+    }
+  };
+  const fetchNotifications = async () => {
+    const results = await getAllNotifications();
+    if (results?.notifications) {
+      setNotifications(results.notifications);
+      setNotificationsCount(results.notifications.length);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const handleReadAll = async () => {
+    try {
+      await ISReadAllNotifications();
+      setNotifications((prevNotifications) => {
+        const updatedNotifications = prevNotifications.map((notification) => ({
+          ...notification,
+          isRead: true,
+        }));
+        const allRead = updatedNotifications.every(
+          (notification) => notification.isRead
+        );
+        if (allRead) {
+          setNotificationsCount(0);
+        }
+
+        return updatedNotifications;
+      });
+    } catch (error) {
+      console.error("Error marking notifications as read:", error);
     }
   };
 
@@ -263,16 +298,6 @@ const DashboardSidebar = ({ open, setOpen }) => {
             </ul>
           )}
         </div>
-
-        <Link
-          to="/petcaresupplies"
-          className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
-            !open ? "justify-center" : ""
-          }`}
-        >
-          <img src={Supplies} className="h-6 w-6 mr-2 invert brightness-110" />
-          {open && <span>Pet Care Supplies</span>}
-        </Link>
         <Link
           to="/contactus"
           className={`flex items-center py-4 px-4 hover:bg-blue-500 text-white font-normal rounded-md cursor-pointer gap-1 ${
@@ -290,13 +315,12 @@ const DashboardSidebar = ({ open, setOpen }) => {
         >
           <img src={Notification} className="h-6 w-6 brightness-110" />
           {notificationsCount > 0 && (
-            <span className="absolute  mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              {notificationsCount}
+            <span className="absolute mb-[20px] right-6 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {notificationsCount > 99 ? "99+" : notificationsCount}
             </span>
           )}
           {open && <span>Notification</span>}
         </Link>
-
         <div className="relative">
           <Link
             onClick={toggleDropdown}

@@ -93,7 +93,11 @@ const LoginUser = async(req, res) => {
             return res.status(400).json({ message: "Invalid email or password." });
         }
 
-        const token = jwt.sign({ id: existingUser._id, email: existingUser.email },
+        const token = jwt.sign({
+                id: existingUser._id,
+                email: existingUser.email,
+                fullname: existingUser.fullname,
+            },
             JWT_SECRET_KEY, {
                 expiresIn: "2h",
             }
@@ -137,7 +141,9 @@ const verifyUserToken = (req, res, next) => {
         const decodedUser = jwt.verify(actualToken, JWT_SECRET_KEY);
         req.id = decodedUser.id;
         req.email = decodedUser.email;
+        req.fullname = decodedUser.fullname;
         req.userRole = decodedUser.role;
+        console.log("Decoded User", decodedUser);
         next();
     } catch (err) {
         console.error("Token verification error:", err.message);

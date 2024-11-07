@@ -11,17 +11,21 @@ const ConsultantLoginContents = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     Loginconsultant({ email, password })
       .then((result) => {
-        console.log("Login succufully ", result);
+        console.log("Login successfully", result);
         toast.success("Login successful!", {
           position: "top-right",
           autoClose: 3000,
         });
         setTimeout(() => {
+          setLoading(false);
           navigate("/ConsultantDashboard");
         }, 3000);
       })
@@ -31,17 +35,19 @@ const ConsultantLoginContents = () => {
           position: "top-right",
           autoClose: 3000,
         });
+        setLoading(false);
         if (err) {
           navigate("/consultantlogin");
         }
       });
   };
+
   return (
     <div
       className="w-full min-h-screen flex items-center justify-center"
       style={{
         background:
-          "linear-gradient(to right,rgba(75, 0, 130, 0.8), rgba(0, 123, 255, 0.8) )",
+          "linear-gradient(to right,rgba(75, 0, 130, 0.8), rgba(0, 123, 255, 0.8))",
       }}
     >
       <motion.div
@@ -93,7 +99,7 @@ const ConsultantLoginContents = () => {
               />
             </div>
           </div>
-          <LoginButton>Login</LoginButton>
+          <LoginButton loading={loading}>Login</LoginButton>
         </form>
         <ToastContainer />
       </motion.div>

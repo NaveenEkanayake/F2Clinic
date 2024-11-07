@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,25 +6,34 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-function createData(id, firstName, lastName, age) {
-  return { id, firstName, lastName, age };
-}
-
-const rows = [
-  createData(1, "John", "Doe", 25),
-  createData(2, "Jane", "Smith", 30),
-  createData(3, "Mike", "Johnson", 35),
-  createData(4, "Emily", "Davis", 28),
-  createData(5, "Sarah", "Wilson", 22),
-  createData(6, "Chris", "Brown", 27),
-  createData(7, "Angela", "White", 34),
-  createData(8, "David", "Garcia", 29),
-  createData(9, "Laura", "Martinez", 31),
-  createData(10, "Steve", "Harris", 40),
-];
+import { verifyCustomer, getAllDoctors } from "../../../Api/config";
 
 export default function DoctorTable() {
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    const fetchAllDoctors = async () => {
+      try {
+        const UserId = verifyCustomer();
+        if (!UserId) {
+          console.log("User ID not found.");
+          return;
+        }
+
+        const response = await getAllDoctors();
+        if (response && response.retrievedData) {
+          setDoctors(response.retrievedData);
+        } else {
+          console.log("Failed to fetch doctor data.");
+        }
+      } catch (err) {
+        console.error("Error fetching doctors:", err);
+      }
+    };
+
+    fetchAllDoctors();
+  }, []);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="doctor table">
@@ -33,18 +42,22 @@ export default function DoctorTable() {
             <TableCell>ID</TableCell>
             <TableCell align="right">First Name</TableCell>
             <TableCell align="right">Last Name</TableCell>
-            <TableCell align="right">Age</TableCell>
+            <TableCell align="right">Speciality</TableCell>
+            <TableCell align="right">Email</TableCell>
+            <TableCell align="right">Phone Number</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
+          {doctors.map((doctor) => (
+            <TableRow key={doctor._id}>
               <TableCell component="th" scope="row">
-                {row.id}
+                {doctor._id}
               </TableCell>
-              <TableCell align="right">{row.firstName}</TableCell>
-              <TableCell align="right">{row.lastName}</TableCell>
-              <TableCell align="right">{row.age}</TableCell>
+              <TableCell align="right">{doctor.firstname}</TableCell>
+              <TableCell align="right">{doctor.lastname}</TableCell>
+              <TableCell align="right">{doctor.speciality}</TableCell>
+              <TableCell align="right">{doctor.email}</TableCell>
+              <TableCell align="right">{doctor.telephoneNumber}</TableCell>
             </TableRow>
           ))}
         </TableBody>
