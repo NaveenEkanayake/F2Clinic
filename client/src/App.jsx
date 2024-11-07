@@ -31,6 +31,12 @@ import UpdatePetRecordForm from "./components/UpdatePetRecordForm/UpdatePetRecor
 import PaymentForm from "./components/CustomerDashboardSidebar/AppointmentForm/Payment/PaymentForm";
 import UpdateAppointmentContent from "./components/UpdateAppointment/UpdateAppointmentContent/UpdateAppointmentContent";
 import ConsultantNotification from "./components/ConsultantNotifiaction/Notifiaction";
+import ForgotPassword from "./components/CustomerLoginContents/ForgotPassword/ForgotPassword";
+import PasswordForm from "./components/CustomerLoginContents/UpdatePasswordForm/PasswordForm";
+import AdminSendEmail from "./components/AdminLogin/AdminLoginContents/AdminSendEmail/AdminSendEmail";
+import AdminResetForm from "./components/AdminLogin/AdminLoginContents/UpdatePassword/UpdateForm";
+import ConsultantSendEmail from "./components/ConsultantLogin/ConsultantLoginContent/ConsultantSendEmail/ConsultantSendEmail";
+import ConsultantResetForm from "./components/ConsultantLogin/ConsultantLoginContent/UpdateForm/UpdateForm";
 const withLoading = (Component) => {
   return function WithLoadingComponent(props) {
     const [loading, setLoading] = useState(true);
@@ -81,6 +87,12 @@ function App() {
   const LoadingPaymentRecordForm = withLoading(PaymentForm);
   const LoadingUpdateAppointmentForm = withLoading(UpdateAppointmentContent);
   const LoadingNotification = withLoading(ConsultantNotification);
+  const LoadingForgotPassword = withLoading(ForgotPassword);
+  const LoadingResetPassword = withLoading(PasswordForm);
+  const LoadingAdminEmail = withLoading(AdminSendEmail);
+  const LoadingResetAdminPassword = withLoading(AdminResetForm);
+  const LoadingConsultantEmail = withLoading(ConsultantSendEmail);
+  const LoadingResetConsultantPassword = withLoading(ConsultantResetForm);
 
   return (
     <Routes>
@@ -103,6 +115,27 @@ function App() {
       <Route path="/Inventory" element={<LoadingInventoryForm />} />
       <Route path="/ViewInventory" element={<LoadingViewInventory />} />
       <Route path="/ConsultantLogin" element={<LoadingConsultantLogin />} />
+      <Route
+        path="/ConsultantforgotPassword"
+        element={<LoadingConsultantEmail />}
+      />
+      <Route
+        path="/CustomerForgotPassword"
+        element={<LoadingForgotPassword />}
+      />
+      <Route path="/AdminForgotPassword" element={<LoadingAdminEmail />} />
+      <Route
+        path="/ResetPassword/:id/:token"
+        element={<LoadingResetPassword />}
+      />
+      <Route
+        path="/ResetConsultantPassword/:id/:token"
+        element={<LoadingResetConsultantPassword />}
+      />
+      <Route
+        path="/ResetAdminPassword/:id/:token"
+        element={<LoadingResetAdminPassword />}
+      />
       <Route
         path="/UpdateAppointment/:id"
         element={<LoadingUpdateAppointmentForm />}

@@ -37,6 +37,38 @@ export const Logoutadmin = async() => {
     }
 };
 
+export const LogoutCustomer = async() => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/logout`, {}, { withCredentials: true }
+        );
+
+        if (response.status === 200) {
+            console.log("Customer logged out successfully.");
+            localStorage.removeItem("customerToken");
+            return response.data;
+        }
+    } catch (error) {
+        console.error("Error logging out customer:", error);
+    }
+};
+
+export const LogoutConsultant = async() => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/logoutConsultant`, {}, { withCredentials: true }
+        );
+
+        if (response.status === 200) {
+            console.log("Consultant logged out successfully.");
+            localStorage.removeItem("consultantToken");
+            return response.data;
+        }
+    } catch (error) {
+        console.error("Error logging out consultant:", error);
+    }
+};
+
 export const Loginconsultant = async(userData) => {
     const response = await axios.post(`${BASE_URL}/loginConsultant`, userData);
     return response.data;
@@ -738,6 +770,91 @@ export const getAllConsultantNotifications = async() => {
         return response.data;
     } catch (error) {
         console.error("Error fetching Notifications :", error);
+        throw error;
+    }
+};
+
+export const getAllIncome = async() => {
+    try {
+        const response = await axios.get(`${BASE_URL}/getAllprices`, {});
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Notifications :", error);
+        throw error;
+    }
+};
+
+export const SendForgotPassword = async(data) => {
+    try {
+        const SendForgotPassword = await axios.post(
+            `${BASE_URL}/Customerforgotpassword`,
+            data
+        );
+        return SendForgotPassword.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const ResetCustomerPassword = async(id, token, data) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/ResetPassword/${id}/${token}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        throw error;
+    }
+};
+
+export const SendAdminForgotPassword = async(data) => {
+    try {
+        const SendAdminForgotPassword = await axios.post(
+            `${BASE_URL}/Adminforgotpassword`,
+            data
+        );
+        return SendAdminForgotPassword.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const ResetAdminPassword = async(id, token, data) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/ResetAdminPassword/${id}/${token}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        throw error;
+    }
+};
+
+export const SendConsultantForgotPassword = async(data) => {
+    try {
+        const SendConsultantForgotPassword = await axios.post(
+            `${BASE_URL}/Consultantforgotpassword`,
+            data
+        );
+        return SendConsultantForgotPassword.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const ResetConsultantPassword = async(id, token, data) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/ResetConsultantPassword/${id}/${token}`,
+            data
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error resetting password:", error);
         throw error;
     }
 };

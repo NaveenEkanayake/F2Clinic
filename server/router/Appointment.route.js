@@ -9,11 +9,13 @@ const {
     countAppointmentPrices,
     getAllConsultantAppointments,
     countAllAppointments,
+    getAllAppointmentPrices,
 } = require("../controllers/appointmentcontroller");
 const { verifyUserToken } = require("../controllers/customercontroller");
 const {
     verifyConsultantToken,
 } = require("../controllers/consultantlogincontroller");
+const { get } = require("http");
 
 const router = express.Router();
 
@@ -26,6 +28,7 @@ router.get(
     verifyConsultantToken,
     getAllConsultantAppointments
 );
+router.get("/getAllprices", getAllAppointmentPrices);
 router.get("/getAppointmentCount/:id", verifyUserToken, countUserAppointments);
 router.get(
     "/getAllAppointmentCount",

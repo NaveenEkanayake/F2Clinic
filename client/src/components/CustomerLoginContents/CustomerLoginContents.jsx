@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { Logincustomer } from "@/Api/config";
+import { Link } from "react-router-dom";
 
 const CustomerLoginContents = () => {
   const navigate = useNavigate();
@@ -102,6 +103,15 @@ const CustomerLoginContents = () => {
                 placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div className="flex justify-center items-center mt-5">
+              <Link
+                to="/CustomerForgotPassword"
+                className="text-white hover:text-blue-500 
+"
+              >
+                Forgot Password
+              </Link>
             </div>
           </div>
           <LoginButton loading={loading}>Login</LoginButton>

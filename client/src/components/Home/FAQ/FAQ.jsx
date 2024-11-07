@@ -20,8 +20,8 @@ const FAQ = () => {
         className="p-4 rounded-lg bg-gradient-to-r from-indigo-500 to-blue-600"
       >
         <Accordion
-          title="What are your opening hours?"
-          answer="we provide a wide range of services including wellness exams, vaccinations, grooming, surgery, and emergency care for furry pets like dogs, cats, rabbits, and more."
+          title=" Do you offer vaccinations for pets?"
+          answer="Yes, we offer a wide range of vaccinations for pets, including rabies, distemper, parvovirus, and more. Our team will guide you on the appropriate vaccination schedule based on your pet’s age, health, and lifestyle."
         />
         <hr className="my-4 border-white opacity-50" />
         <Accordion

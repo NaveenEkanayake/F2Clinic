@@ -2,6 +2,9 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
+const {
+    sendAdminForgotPasswordEmail,
+} = require("../Email/ForgotAdminPassword");
 
 //env file
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -195,6 +198,55 @@ const adminLogout = (req, res) => {
     }
 };
 
+const forgotAdminPassword = async(req, res) => {
+    const { email } = req.body;
+
+    try {
+        const admin = await Admin.findOne({ email: email });
+        if (!admin) {
+            return res.status(404).send({ status: "admin  not found" });
+        }
+
+        const token = jwt.sign({ id: admin._id }, JWT_SECRET_KEY, {
+            expiresIn: "1h",
+        });
+        const resetLink = `http://localhost:5173/ResetAdminPassword/${admin._id}/${token}`;
+
+        await sendAdminForgotPasswordEmail(email, resetLink);
+
+        res.send({ status: "Password reset email sent successfully" });
+    } catch (error) {
+        console.error("Error in forgotPassword:", error);
+        res.status(500).send({ status: "Error sending password reset email" });
+    }
+};
+
+const resetAdminPassword = async(req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.json({ status: "Error with Token" });
+        } else {
+            bcrypt
+                .hash(password, 10)
+                .then((hash) => {
+                    return Admin.findByIdAndUpdate(id, { password: hash });
+                })
+                .then((admin) => {
+                    if (!admin) {
+                        return res.json({ status: "admin not found" });
+                    }
+                    res.json({ status: "Success" });
+                })
+                .catch((err) =>
+                    res.json({ status: "Error updating password", error: err })
+                );
+        }
+    });
+};
+
 module.exports = {
     Signup,
     LoginAdmin,
@@ -202,4 +254,6 @@ module.exports = {
     getAdmin,
     refreshToken,
     adminLogout,
+    forgotAdminPassword,
+    resetAdminPassword,
 };

@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { Loginconsultant } from "@/Api/config";
+import { Link } from "react-router-dom";
 
 const ConsultantLoginContents = () => {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ const ConsultantLoginContents = () => {
       >
         <div className="w-full h-auto text-center">
           <p className="text-white text-2xl font-semibold mb-5">
-            Welcome Back!!!
+            Welcome to Furry Pet Clinic!!!
           </p>
         </div>
         <form
@@ -97,6 +98,15 @@ const ConsultantLoginContents = () => {
                 placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div className="flex justify-center items-center mt-5">
+              <Link
+                to="/ConsultantForgotPassword"
+                className="text-white hover:text-blue-500 
+"
+              >
+                Forgot Password
+              </Link>
             </div>
           </div>
           <LoginButton loading={loading}>Login</LoginButton>

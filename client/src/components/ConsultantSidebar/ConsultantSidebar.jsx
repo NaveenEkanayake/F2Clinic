@@ -18,11 +18,15 @@ import {
   uploadConsultantImage,
   getConsultantIMG,
   getAllNotifications,
+  LogoutConsultant,
 } from "../../Api/config";
 import { ToastContainer } from "react-toastify";
 import app from "../Firebase/config";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ConsultantSidebar = ({ open, setOpen }) => {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(0);
@@ -77,6 +81,17 @@ const ConsultantSidebar = ({ open, setOpen }) => {
   useEffect(() => {
     fetchConsultantUrl();
   }, []);
+
+  const handleLogout = async () => {
+    const result = await LogoutConsultant();
+    if (result && result.message) {
+      toast.success(result.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      navigate("/consultantlogin");
+    }
+  };
 
   const uploadFile = (file) => {
     const storage = getStorage(app);
@@ -244,7 +259,7 @@ const ConsultantSidebar = ({ open, setOpen }) => {
       </ul>
 
       <Link
-        to="/logout"
+        onClick={handleLogout}
         className={`flex items-center py-4 px-4 ${
           open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
         } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${

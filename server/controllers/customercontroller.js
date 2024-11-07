@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/customer");
+const { sendForgotPasswordEmail } = require("../Email/ForgotPassword");
 
 //env file
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -218,6 +219,55 @@ const logout = (req, res) => {
     }
 };
 
+const forgotPassword = async(req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(404).send({ status: "User not found" });
+        }
+
+        const token = jwt.sign({ id: user._id }, JWT_SECRET_KEY, {
+            expiresIn: "1h",
+        });
+        const resetLink = `http://localhost:5173/ResetPassword/${user._id}/${token}`;
+
+        await sendForgotPasswordEmail(email, resetLink);
+
+        res.send({ status: "Password reset email sent successfully" });
+    } catch (error) {
+        console.error("Error in forgotPassword:", error);
+        res.status(500).send({ status: "Error sending password reset email" });
+    }
+};
+
+const resetPassword = async(req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.json({ status: "Error with Token" });
+        } else {
+            bcrypt
+                .hash(password, 10)
+                .then((hash) => {
+                    return User.findByIdAndUpdate(id, { password: hash });
+                })
+                .then((user) => {
+                    if (!user) {
+                        return res.json({ status: "User not found" });
+                    }
+                    res.json({ status: "Success" });
+                })
+                .catch((err) =>
+                    res.json({ status: "Error updating password", error: err })
+                );
+        }
+    });
+};
+
 module.exports = {
     Signup,
     LoginUser,
@@ -225,5 +275,7 @@ module.exports = {
     getUser,
     refreshToken,
     getCustomerCount,
+    forgotPassword,
     logout,
+    resetPassword,
 };

@@ -1,37 +1,36 @@
-import { IoMailOutline, IoLockClosedOutline } from "react-icons/io5";
+import { IoLockClosedOutline } from "react-icons/io5";
+import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import LoginButton from "../AdminLoginButton/LoginButton";
-import { useNavigate } from "react-router-dom";
+import UpdateButton from "./UpdateButton/UpdateButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
-import { Loginadmin } from "@/Api/config";
-import { Link } from "react-router-dom";
+import { ResetConsultantPassword } from "@/Api/config";
+import { useNavigate } from "react-router-dom";
 
-const AdminLoginContents = () => {
+const ConsultantResetForm = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { id, token } = useParams();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-
-    Loginadmin({ email, password })
+    ResetConsultantPassword(id, token, { password })
       .then((result) => {
-        console.log("Login successfully", result);
-        toast.success("Login successful!", {
+        console.log("Password reset successfully", result);
+        toast.success("Password reset successfully!", {
           position: "top-right",
           autoClose: 3000,
         });
         setTimeout(() => {
-          navigate("/admindashboard");
+          navigate("/Consultantlogin");
         }, 3000);
       })
       .catch((err) => {
-        console.error("Login failed:", err);
-        toast.error("Login failed. Invalid Password or email already exists.", {
+        console.error("Failed to reset password:", err);
+        toast.error("Failed to reset password. Please try again.", {
           position: "top-right",
           autoClose: 3000,
         });
@@ -67,7 +66,7 @@ const AdminLoginContents = () => {
       >
         <div className="w-full h-auto text-center">
           <p className="text-white text-2xl font-semibold mb-5">
-            Welcome Back Admin!!!
+            Enter Your New Password to Reset the Old!!!
           </p>
         </div>
         <form
@@ -75,41 +74,22 @@ const AdminLoginContents = () => {
           className="w-full h-auto flex flex-col items-center gap-7 px-10"
         >
           <div className="w-full relative">
-            <label className="text-white font-semibold ">Email</label>
-            <div className="flex items-center mt-2">
-              <IoMailOutline className="text-white mr-3" />
-              <input
-                type="email"
-                name="email"
-                className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="w-full relative">
-            <label className="text-white font-semibold">Password</label>
+            <label className="text-white font-semibold">New Password</label>
             <div className="flex items-center mt-2">
               <IoLockClosedOutline className="text-white mr-3" />
               <input
                 type="password"
                 name="password"
+                value={password}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your password"
+                placeholder="Enter your new password"
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </div>
-            <div className="flex justify-center items-center mt-5">
-              <Link
-                to="/AdminForgotPassword"
-                className="text-white hover:text-blue-500 
-"
-              >
-                Forgot Password
-              </Link>
-            </div>
           </div>
-          <LoginButton loading={loading}>Login</LoginButton>
+
+          <UpdateButton loading={loading}>Update</UpdateButton>
         </form>
         <ToastContainer />
       </motion.div>
@@ -117,4 +97,4 @@ const AdminLoginContents = () => {
   );
 };
 
-export default AdminLoginContents;
+export default ConsultantResetForm;

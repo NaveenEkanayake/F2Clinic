@@ -23,12 +23,15 @@ import {
   getCustomerIMG,
   getAllNotifications,
   ISReadAllNotifications,
+  LogoutCustomer,
 } from "../../Api/config";
 import Avatar from "../../assets/images/avatar.png";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const DashboardSidebar = ({ open, setOpen }) => {
+  const navigate = useNavigate();
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [isPetRecordsOpen, setIsPetRecordsOpen] = useState(false);
   const [notificationsCount, setNotificationsCount] = useState(0);
@@ -129,6 +132,16 @@ const DashboardSidebar = ({ open, setOpen }) => {
     fetchNotifications();
   }, []);
 
+  const handleLogout = async () => {
+    const result = await LogoutCustomer();
+    if (result && result.message) {
+      toast.success(result.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      navigate("/customerlogin");
+    }
+  };
   const handleReadAll = async () => {
     try {
       await ISReadAllNotifications();
@@ -339,7 +352,7 @@ const DashboardSidebar = ({ open, setOpen }) => {
         </div>
       </ul>
       <Link
-        to="/logout"
+        onClick={handleLogout}
         className={`flex items-center py-4 px-4 ${
           open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
         } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${

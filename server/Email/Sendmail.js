@@ -17,11 +17,10 @@ async function sendMail(
     specialty,
     generatedPassword
 ) {
-    // Define the email options
     const mailOptions = {
-        from: '"Furry Pet Clinic" <furrrypetclinic@gmail.com>', // Sender address
-        to: to, // Recipient address
-        subject: subject, // Subject of the email
+        from: '"Furry Pet Clinic" <furrrypetclinic@gmail.com>',
+        to: to,
+        subject: subject,
         html: `
     <div style="font-family: 'Google Sans', 'Noto Naskh Arabic UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #ffffff;">
       <h2 style="color: #000; text-align: center;"><em>Furry Pet Clinic</em></h2>
@@ -49,11 +48,10 @@ async function sendMail(
     };
 
     try {
-        // Attempt to send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log("Message sent:", info.messageId); // Log the message ID if successful
+        console.log("Message sent:", info.messageId);
     } catch (error) {
-        console.error("Error occurred:", error); // Log the error if something goes wrong
+        console.error("Error occurred:", error);
     }
 }
 

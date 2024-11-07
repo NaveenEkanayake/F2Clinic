@@ -1,37 +1,30 @@
-import { IoMailOutline, IoLockClosedOutline } from "react-icons/io5";
+import { IoMailOutline } from "react-icons/io5";
 import { motion } from "framer-motion";
-import LoginButton from "../AdminLoginButton/LoginButton";
-import { useNavigate } from "react-router-dom";
+import SendButton from "./SendButton/SendButton";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
-import { Loginadmin } from "@/Api/config";
-import { Link } from "react-router-dom";
+import { SendAdminForgotPassword } from "@/Api/config";
 
-const AdminLoginContents = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+const AdminSendEmail = () => {
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    Loginadmin({ email, password })
+    SendAdminForgotPassword({ email })
       .then((result) => {
-        console.log("Login successfully", result);
-        toast.success("Login successful!", {
+        console.log("Password reset email sent successfully", result);
+        toast.success("Password reset email sent successfully!", {
           position: "top-right",
           autoClose: 3000,
         });
-        setTimeout(() => {
-          navigate("/admindashboard");
-        }, 3000);
       })
       .catch((err) => {
-        console.error("Login failed:", err);
-        toast.error("Login failed. Invalid Password or email already exists.", {
+        console.error("Failed to send password reset email:", err);
+        toast.error("Failed to send password reset email. Please try again.", {
           position: "top-right",
           autoClose: 3000,
         });
@@ -67,7 +60,7 @@ const AdminLoginContents = () => {
       >
         <div className="w-full h-auto text-center">
           <p className="text-white text-2xl font-semibold mb-5">
-            Welcome Back Admin!!!
+            Enter Your Email to reset Password
           </p>
         </div>
         <form
@@ -87,29 +80,7 @@ const AdminLoginContents = () => {
               />
             </div>
           </div>
-          <div className="w-full relative">
-            <label className="text-white font-semibold">Password</label>
-            <div className="flex items-center mt-2">
-              <IoLockClosedOutline className="text-white mr-3" />
-              <input
-                type="password"
-                name="password"
-                className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-center items-center mt-5">
-              <Link
-                to="/AdminForgotPassword"
-                className="text-white hover:text-blue-500 
-"
-              >
-                Forgot Password
-              </Link>
-            </div>
-          </div>
-          <LoginButton loading={loading}>Login</LoginButton>
+          <SendButton loading={loading}>Send</SendButton>
         </form>
         <ToastContainer />
       </motion.div>
@@ -117,4 +88,4 @@ const AdminLoginContents = () => {
   );
 };
 
-export default AdminLoginContents;
+export default AdminSendEmail;

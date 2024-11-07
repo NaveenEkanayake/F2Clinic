@@ -237,6 +237,34 @@ const countAppointmentPrices = async(req, res) => {
         });
     }
 };
+
+const getAllAppointmentPrices = async(req, res) => {
+    try {
+        const result = await AppointmentModel.aggregate([{
+            $group: {
+                _id: null,
+                totalAppointmentPrice: { $sum: "$AppointmentPrice" },
+            },
+        }, ]);
+        const total = result.length > 0 ? result[0].totalAppointmentPrice : 0;
+
+        console.log("Total Appointment Prices for all users:", result);
+
+        return res.status(200).json({
+            message: "Total appointment prices for all users calculated successfully",
+            totalAppointmentPrice: total,
+        });
+    } catch (error) {
+        console.error(
+            "Error in calculating total appointment prices for all users:",
+            error
+        );
+        return res.status(500).json({
+            message: "An error occurred while calculating total appointment prices.",
+        });
+    }
+};
+
 module.exports = {
     addAppointment,
     getAllAppointments,
@@ -247,4 +275,5 @@ module.exports = {
     countAppointmentPrices,
     getAllConsultantAppointments,
     countAllAppointments,
+    getAllAppointmentPrices,
 };

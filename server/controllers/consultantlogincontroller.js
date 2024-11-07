@@ -2,6 +2,9 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Consultant = require("../models/consultantlogin");
+const {
+    sendConsultantForgotPasswordEmail,
+} = require("../Email/ForgotConsultantPassword");
 
 //env file
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -155,10 +158,61 @@ const logoutConsultant = (req, res) => {
     }
 };
 
+const forgotConsultantPassword = async(req, res) => {
+    const { email } = req.body;
+
+    try {
+        const consultant = await Consultant.findOne({ email: email });
+        if (!consultant) {
+            return res.status(404).send({ status: "consultant not found" });
+        }
+
+        const token = jwt.sign({ id: consultant._id }, JWT_SECRET_KEY, {
+            expiresIn: "1h",
+        });
+        const resetLink = `http://localhost:5173/ResetConsultantPassword/${consultant._id}/${token}`;
+
+        await sendConsultantForgotPasswordEmail(email, resetLink);
+
+        res.send({ status: "Password reset email sent successfully" });
+    } catch (error) {
+        console.error("Error in forgotPassword:", error);
+        res.status(500).send({ status: "Error sending password reset email" });
+    }
+};
+
+const resetConsultantPassword = async(req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.json({ status: "Error with Token" });
+        } else {
+            bcrypt
+                .hash(password, 10)
+                .then((hash) => {
+                    return Consultant.findByIdAndUpdate(id, { password: hash });
+                })
+                .then((consultant) => {
+                    if (!consultant) {
+                        return res.json({ status: "consultant not found" });
+                    }
+                    res.json({ status: "Success" });
+                })
+                .catch((err) =>
+                    res.json({ status: "Error updating password", error: err })
+                );
+        }
+    });
+};
+
 module.exports = {
     LoginConsultant,
     verifyConsultantToken,
     getConsultant,
     refreshConsultantToken,
     logoutConsultant,
+    forgotConsultantPassword,
+    resetConsultantPassword,
 };

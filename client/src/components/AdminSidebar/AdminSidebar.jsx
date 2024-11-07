@@ -16,10 +16,17 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { verifyadmin, uploadAdminImage, getAdminIMG } from "../../Api/config";
-import LogoutButton from "./AdminLogoutButton/LogoutButton";
+import {
+  verifyadmin,
+  uploadAdminImage,
+  getAdminIMG,
+  Logoutadmin,
+} from "../../Api/config";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import Logout from "../../assets/images/logout.webp";
+import { toast } from "react-toastify";
 
 const AdminSidebar = ({ open, setOpen }) => {
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
@@ -86,6 +93,18 @@ const AdminSidebar = ({ open, setOpen }) => {
         });
       }
     );
+  };
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const result = await Logoutadmin();
+    if (result && result.message) {
+      toast.success(result.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      navigate("/adminlogin");
+    }
   };
 
   const handleFileChange = (e) => {
@@ -319,10 +338,21 @@ const AdminSidebar = ({ open, setOpen }) => {
           )}
         </div>
       </ul>
-      <div className={`mt-20 ${!open}`}>
-        <LogoutButton open={open} />
-      </div>
-      <ToastContainer />
+      <Link
+        onClick={handleLogout}
+        className={`flex items-center py-4 px-4 ${
+          open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
+        } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${
+          !open ? "justify-center" : ""
+        }`}
+      >
+        <img
+          src={Logout}
+          alt="Logout Icon"
+          className="h-6 w-6 mr-2 invert brightness-110"
+        />
+        {open && <span>Logout</span>}
+      </Link>
       <div className="mt-auto text-white">
         {open && (
           <p className="text-sm text-center">
