@@ -879,3 +879,23 @@ export const getAllConsultantpetRecords = async () => {
     throw error;
   }
 };
+
+export const getAllContactmessages = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/GetAllMessage`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching getAllContact messages :", error);
+    throw error;
+  }
+};
+
+export const AppointmentPrice = async (data) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/AppointmentPayment`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error Adding the Appointment Price:", error);
+    throw error;
+  }
+};

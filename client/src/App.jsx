@@ -36,6 +36,7 @@ import AdminSendEmail from "./components/AdminLogin/AdminLoginContents/AdminSend
 import AdminResetForm from "./components/AdminLogin/AdminLoginContents/UpdatePassword/UpdateForm";
 import ConsultantSendEmail from "./components/ConsultantLogin/ConsultantLoginContent/ConsultantSendEmail/ConsultantSendEmail";
 import ConsultantResetForm from "./components/ConsultantLogin/ConsultantLoginContent/UpdateForm/UpdateForm";
+import ViewAdminNotification from "./components/AdminCreateNotification/ViewNotification/ViewAdminNotification";
 const withLoading = (Component) => {
   return function WithLoadingComponent(props) {
     const [loading, setLoading] = useState(true);
@@ -91,6 +92,7 @@ function App() {
   const LoadingResetAdminPassword = withLoading(AdminResetForm);
   const LoadingConsultantEmail = withLoading(ConsultantSendEmail);
   const LoadingResetConsultantPassword = withLoading(ConsultantResetForm);
+  const LoadingViewAdminNotification = withLoading(ViewAdminNotification);
 
   return (
     <Routes>
@@ -165,6 +167,10 @@ function App() {
       <Route
         path="/createmessage"
         element={<LoadingCreateNotificationForm />}
+      />
+           <Route
+        path="/adminviewnotification"
+        element={<LoadingViewAdminNotification />}
       />
       <Route
         path="/ConsultantpetRecord"

@@ -37,7 +37,7 @@ const Sidebar = () => {
             open ? "xl:scale-100  text-nowrap" : "scale-0"
           }`}
         >
-          Welcome Furry Pet Clinic
+          Furry Pet Clinic
         </h1>
       </div>
       <ul className="pt-8 space-y-4 sm:space-y-0">
