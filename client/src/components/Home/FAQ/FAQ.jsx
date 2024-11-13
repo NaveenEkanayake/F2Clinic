@@ -1,26 +1,27 @@
 import React from "react";
 import Accordion from "./Accordion";
 import { motion } from "framer-motion";
+
 const FAQ = () => {
   return (
     <>
       <motion.h1
-        initial={{ translateY: "100%" }}
+        initial={{ translateY: "20%" }}
         whileInView={{ translateY: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-center font-bold text-[50px] tracking-wide mt-[-100px] mb-7"
+        className="text-center font-bold text-[32px] sm:text-[40px] md:text-[50px] lg:text-[60px] tracking-wide mt-[-100px] mb-7"
         id="faq"
       >
         FAQ
       </motion.h1>
       <motion.div
-        initial={{ translateY: "100%" }}
+        initial={{ translateY: "20%" }}
         whileInView={{ translateY: 0 }}
         transition={{ duration: 0.8 }}
         className="p-4 rounded-lg bg-gradient-to-r from-indigo-500 to-blue-600"
       >
         <Accordion
-          title=" Do you offer vaccinations for pets?"
+          title="Do you offer vaccinations for pets?"
           answer="Yes, we offer a wide range of vaccinations for pets, including rabies, distemper, parvovirus, and more. Our team will guide you on the appropriate vaccination schedule based on your pet’s age, health, and lifestyle."
         />
         <hr className="my-4 border-white opacity-50" />
@@ -36,7 +37,7 @@ const FAQ = () => {
         <hr className="my-4 border-white opacity-50" />
         <Accordion
           title="How often should I bring my furry pet for a check-up?"
-          answer="For most furry pets, we recommend an annual check-up. However, senior pets or those with specific health concerns may require more frequent visits. "
+          answer="For most furry pets, we recommend an annual check-up. However, senior pets or those with specific health concerns may require more frequent visits."
         />
       </motion.div>
     </>

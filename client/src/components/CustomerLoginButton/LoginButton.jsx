@@ -30,7 +30,7 @@ const LoginButton = ({ loading, children }) => {
       disabled={loading}
     >
       {loading ? (
-        <div className="flex items-center">
+        <div className="grid grid-cols-[auto,1fr] items-center gap-2">
           <span className={`animate-spin`}>{icons[currentIcon]}</span>
           <span className="text-white">Logging...</span>
         </div>

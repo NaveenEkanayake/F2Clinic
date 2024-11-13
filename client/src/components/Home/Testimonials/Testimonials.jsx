@@ -61,15 +61,15 @@ const Testimonials = () => {
     <section className="flex flex-col items-center justify-center h-[100vh] my-auto w-full mx-auto cursor-pointer">
       <div className="mb-20">
         <motion.h1
-          initial={{ translateY: "100%" }}
+          initial={{ translateY: "20%" }}
           whileInView={{ translateY: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center font-bold text-[50px] tracking-wide"
+          className="text-center font-bold text-[30px] sm:text-[50px] tracking-wide"
         >
           Review
         </motion.h1>
       </div>
-      <div className="relative overflow-hidden w-full max-w-[880px]">
+      <div className="relative overflow-hidden w-full max-w-[880px] mx-auto">
         <div
           className={`flex transition-transform duration-500 ease-in-out`}
           style={{
@@ -79,7 +79,7 @@ const Testimonials = () => {
           {images.map((image, index) => (
             <div
               key={index}
-              className="relative flex items-end p-4 min-w-[300px] h-[25rem] bg-cover bg-center rounded-lg mx-2 shadow-md"
+              className="relative flex items-end p-4 min-w-[300px] h-[25rem] sm:h-[20rem] md:h-[22rem] bg-cover bg-center rounded-lg mx-2 shadow-md"
               style={{
                 backgroundImage: `url(${pets[index]})`,
               }}
@@ -88,35 +88,38 @@ const Testimonials = () => {
               <img
                 src={image}
                 alt={`Image for ${testimonials[index].title}`}
-                className="absolute  z-20 bottom-[100px] left-[40px] w-16
-                 h-16 rounded-full"
+                className="absolute z-20 bottom-[100px] left-[40px] w-16 h-16 rounded-full"
               />
               <div className="relative z-10 ml-28 mb-4 text-white flex flex-col">
-                <h4 className="text-md font-semibold mb-1 left-[300px] text-center">
+                <h4 className="text-md font-semibold mb-1 text-center">
                   {testimonials[index].title}
                 </h4>
-                <p className="text-xs font-bold mb-0 ">
+                <p className="text-xs font-bold mb-0">
                   {testimonials[index].content}
                 </p>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Previous Button */}
         <div
           className={`absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg cursor-pointer ${
             currentIndex === 0 ? "hidden" : ""
           }`}
           onClick={handlePrev}
         >
-          <PrevButton></PrevButton>
+          <PrevButton />
         </div>
+
+        {/* Next Button */}
         <div
           className={`absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg cursor-pointer ${
             currentIndex === totalImages - 1 ? "hidden" : ""
           }`}
           onClick={handleNext}
         >
-          <NextButton></NextButton>
+          <NextButton />
         </div>
       </div>
     </section>

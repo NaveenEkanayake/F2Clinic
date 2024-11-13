@@ -103,7 +103,7 @@ const InventoryContent = () => {
           position: "top-right",
           autoClose: 3000,
         });
-        navigate('/admindashboard');
+        navigate("/admindashboard");
       })
       .catch((error) => {
         console.error("Error adding inventory:", error);
@@ -120,13 +120,13 @@ const InventoryContent = () => {
   return (
     <div className="w-full min-h-screen flex ml-10 items-center justify-center">
       <ToastContainer />
-      <div className="flex w-full max-w-5xl">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-5">
         <InventorySVG />
         <motion.div
           initial={{ opacity: 0, translateY: "100%" }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-[60%] h-auto py-20 rounded-xl ml-5"
+          className="w-full h-auto py-20 rounded-xl"
           style={{
             background: "rgba(0, 0, 0, 0.7)",
             boxShadow: "8px 8px 40px rgba(0, 0, 0, 0.9)",

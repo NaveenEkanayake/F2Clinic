@@ -168,7 +168,7 @@ const ConsultantTable = () => {
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} className="overflow-x-auto">
       <ToastContainer position="top-right" />
       <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
@@ -222,6 +222,7 @@ const ConsultantTable = () => {
             </TableRow>
           )}
         </TableBody>
+
         <TableFooter>
           <TableRow>
             <TablePagination

@@ -53,13 +53,13 @@ const ConsultantContents = () => {
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <ToastContainer />
-      <div className="flex w-full max-w-5xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full max-w-5xl gap-5">
         <ConsultantSvg />
         <motion.div
           initial={{ opacity: 0, translateY: "100%" }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-[60%] h-auto py-20 rounded-xl ml-5"
+          className="w-full h-auto py-20 rounded-xl"
           style={{
             background: "rgba(0, 0, 0, 0.7)",
             boxShadow: "8px 8px 40px rgba(0, 0, 0, 0.9)",

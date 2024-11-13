@@ -67,10 +67,11 @@ const DashboardContents = ({ isSidebarOpen }) => {
       <Box sx={{ height: 20 }} />
       <Box sx={{ flexGrow: 1, p: 3 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          {/* First Card: Total Appointments */}
+          <Grid item xs={6} sm={4} md={4}>
             <Card
               sx={{
-                maxWidth: 450,
+                maxWidth: 550,
                 background: "linear-gradient(to right, #00C853, #1E88E5)",
                 color: "white",
               }}
@@ -108,10 +109,12 @@ const DashboardContents = ({ isSidebarOpen }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+
+          {/* Second Card: Total Pet Records */}
+          <Grid item xs={6} sm={4} md={4}>
             <Card
               sx={{
-                maxWidth: 450,
+                maxWidth: 550,
                 background: "linear-gradient(to right, #1E88E5, #90CAF9)",
                 color: "white",
               }}
@@ -149,24 +152,25 @@ const DashboardContents = ({ isSidebarOpen }) => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={6} sm={4} md={4}>
             <Card
               sx={{
-                maxWidth: 450,
+                maxWidth: 350,
                 background: "linear-gradient(to right, #3F51B5, #2196F3)",
                 color: "white",
               }}
               style={{
-                height: "887px",
+                marginLeft: "50px",
+                height: "707px",
                 borderRadius: "20px",
               }}
             >
               <CardContent>
                 <Box
-                  sx={{
+                  style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "flex-end",
                   }}
                 >
                   <AttachMoneyIcon />
@@ -188,12 +192,15 @@ const DashboardContents = ({ isSidebarOpen }) => {
                     marginTop: "70px",
                   }}
                 >
-                  <AttachMoneyIcon />
+                  <AttachMoneyIcon className="mt-[-70px]" />
                   <Typography
                     gutterBottom
                     variant="h5"
                     align="center"
                     component="div"
+                    style={{
+                      marginTop: "-70px",
+                    }}
                   >
                     Total Expenses
                   </Typography>
@@ -212,11 +219,13 @@ const DashboardContents = ({ isSidebarOpen }) => {
             </Card>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={4} mt={-87}>
+        <Grid item xs={12} sm={12} md={4} mt={-62} pr={20}>
           <Card
-            sx={{ maxWidth: 960 }}
+            sx={{
+              maxWidth: isSidebarOpen ? 1120 : 1000,
+            }}
             style={{
-              height: "680px",
+              height: "480px",
               borderRadius: "20px",
             }}
           >
@@ -226,14 +235,19 @@ const DashboardContents = ({ isSidebarOpen }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: 2,
                 }}
               >
-                <PeopleAltIcon />
+                <PeopleAltIcon sx={{ fontSize: { xs: 30, sm: 40 } }} />
                 <Typography
                   gutterBottom
                   variant="h5"
                   align="center"
                   component="div"
+                  sx={{
+                    fontSize: { xs: "1.5rem", sm: "2rem" },
+                  }}
                 >
                   Our Doctors
                 </Typography>

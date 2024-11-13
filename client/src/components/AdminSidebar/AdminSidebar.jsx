@@ -309,12 +309,6 @@ const AdminSidebar = ({ open, setOpen }) => {
               >
                 Create Message
               </Link>
-              <Link
-                to="/adminNotification"
-                className="block py-4 px-4 hover:bg-blue-500 rounded-lg"
-              >
-                View Message
-              </Link>
             </ul>
           )}
         </div>

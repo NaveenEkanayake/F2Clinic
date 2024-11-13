@@ -16,7 +16,6 @@ import CustomerContactUs from "./components/CustomerContactus/Customercontactus"
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import AddConsultantForm from "./components/AdminContents/AddConsultantForm/AddConsultantForm";
 import ViewConsultant from "./components/AdminContents/ViewConsultant/ViewConsultant";
-import AdminNotification from "./components/AdminContents/AdminNotification/AdminNotification/AdminNotification";
 import InventoryForm from "./components/AdminContents/AddInventory/InventoryForm";
 import ViewInventory from "./components/AdminContents/ViewInventory/ViewInventory";
 import ConsultantDashboard from "./pages/ConsultantDashboard/ConsultantDasahboard";
@@ -74,7 +73,6 @@ function App() {
   const LoadingAdminDashboard = withLoading(AdminDashboard);
   const LoadingAddConsultantForm = withLoading(AddConsultantForm);
   const LoadingViewConsultant = withLoading(ViewConsultant);
-  const LoadingAdminNotification = withLoading(AdminNotification);
   const LoadingInventoryForm = withLoading(InventoryForm);
   const LoadingViewInventory = withLoading(ViewInventory);
   const LoadingConsultantLogin = withLoading(ConsultantLogin);
@@ -111,7 +109,6 @@ function App() {
       <Route path="/admindashboard" element={<LoadingAdminDashboard />} />
       <Route path="/addconsultant" element={<LoadingAddConsultantForm />} />
       <Route path="/viewconsultant" element={<LoadingViewConsultant />} />
-      <Route path="/adminNotification" element={<LoadingAdminNotification />} />
       <Route path="/Inventory" element={<LoadingInventoryForm />} />
       <Route path="/ViewInventory" element={<LoadingViewInventory />} />
       <Route path="/ConsultantLogin" element={<LoadingConsultantLogin />} />

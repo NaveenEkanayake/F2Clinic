@@ -13,10 +13,10 @@ const OurClients = () => {
   return (
     <div id="partners">
       <motion.div
-        initial={{ translateY: "100%" }}
+        initial={{ translateY: "20%" }}
         whileInView={{ translateY: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mt-[80px] font-bold text-[50px] tracking-wide mb-10"
+        className="text-center mt-[80px] font-bold text-[30px] sm:text-[50px] tracking-wide mb-10"
       >
         <h1>Our Partners</h1>
       </motion.div>

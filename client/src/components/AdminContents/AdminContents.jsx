@@ -212,11 +212,12 @@ const AdminContents = ({ isSidebarOpen }) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} md={4} mt={2}>
+        <Grid item xs={12} sm={8} md={4} mt={2}>
           <Card
-            sx={{ maxWidth: 1460 }}
-            style={{
-              height: "680px",
+            sx={{
+              maxWidth: { xs: "100%", sm: "500px", md: 1600 },
+              width: { xs: "90%", sm: "420px", md: "100%" },
+              height: { xs: "auto", sm: "480px", md: "680px" },
               borderRadius: "20px",
             }}
           >

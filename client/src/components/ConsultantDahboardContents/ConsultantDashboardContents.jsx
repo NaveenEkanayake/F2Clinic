@@ -51,12 +51,8 @@ const ConsultantDashboardContents = () => {
           console.log("Consultant ID not found.");
           return;
         }
-
-        // Fetch the appointment status
         const AppointmentStatus = await getAppointmentStatus();
         console.log("Appointment Status Response:", AppointmentStatus);
-
-        // Ensure you're using the correct keys from the response
         setCountedApprovalCount({
           totalCount: AppointmentStatus.ApprovalCount || 0,
         });
@@ -203,7 +199,7 @@ const ConsultantDashboardContents = () => {
         </Grid>
         <Grid item xs={12} md={4} mt={2}>
           <Card
-            sx={{ maxWidth: 1460 }}
+            sx={{ maxWidth: 1600 }}
             style={{
               height: "680px",
               borderRadius: "20px",

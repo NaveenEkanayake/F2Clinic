@@ -85,7 +85,7 @@ const ConsultantNotificationContent = ({
 
   return (
     <>
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center p-4">
         <button
           onClick={handleReadAll}
           className="py-2 px-6 border-2 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 rounded-lg mr-12"
@@ -100,7 +100,7 @@ const ConsultantNotificationContent = ({
             key={notification._id}
             className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 justify-between ${
               isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
-            }`}
+            } sm:w-full sm:ml-0 md:w-[90%] md:ml-4 lg:w-[95%] lg:ml-6`}
           >
             <div className="flex items-center justify-between flex-1">
               <div className="flex-1">{notification.message}</div>

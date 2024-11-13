@@ -168,7 +168,7 @@ const DashboardSidebar = ({ open, setOpen }) => {
     <div
       className={`${
         open ? "w-96" : "w-24"
-      } flex flex-col h-screen p-5 pt-8 bg-[#081A51] relative transition-all duration-300`}
+      } flex flex-col  p-5 pt-8 bg-[#081A51] relative min-h-screen transition-all duration-300`}
     >
       <img
         src={Sidebararrow}
@@ -355,14 +355,14 @@ const DashboardSidebar = ({ open, setOpen }) => {
         onClick={handleLogout}
         className={`flex items-center py-4 px-4 ${
           open ? "bg-slate-700 hover:bg-blue-600" : "bg-transparent"
-        } text-white font-normal rounded-md cursor-pointer gap-1 mt-auto ${
+        } text-white font-normal rounded-md cursor-pointer gap-1  mt-[50px] ${
           !open ? "justify-center" : ""
         }`}
       >
         <img src={Logout} className="h-6 w-6 mr-2 invert brightness-110" />
         {open && <span>Logout</span>}
       </Link>
-      <div className="mt-auto text-white">
+      <div className="mt-[30px] text-white">
         {open && (
           <p className="text-sm text-center">
             &copy; {new Date().getFullYear()} Furry Pet Clinic. All Rights

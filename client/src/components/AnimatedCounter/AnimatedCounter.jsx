@@ -4,7 +4,7 @@ const AnimatedCounter = ({ from, to }) => {
   const [count, setCount] = useState(from);
 
   useEffect(() => {
-    setCount(from); // Reset count to `from` whenever `from` changes
+    setCount(from);
     let startTime = null;
     const duration = 2000;
 
@@ -23,9 +23,8 @@ const AnimatedCounter = ({ from, to }) => {
     };
     requestAnimationFrame(animate);
 
-    // Cleanup function to reset count on unmount
     return () => {
-      setCount(from); // Reset count if unmounted
+      setCount(from);
     };
   }, [from, to]);
 

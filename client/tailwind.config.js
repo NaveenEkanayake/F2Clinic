@@ -7,6 +7,12 @@ export default {
       transitionProperty: {
         transform: "transform",
       },
+      screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "960px",
+        xl: "1200px",
+      },
       perspective: {
         1000: "1000px",
       },

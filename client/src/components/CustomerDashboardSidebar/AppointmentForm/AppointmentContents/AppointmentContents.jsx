@@ -50,13 +50,13 @@ const AppointmentContents = ({ isSidebarOpen }) => {
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
-      <div className="flex w-full max-w-5xl">
+      <div className="flex w-full max-w-5xl flex-col lg:flex-row">
         <AppointmentSvg />
         <motion.div
           initial={{ opacity: 0, translateY: "100%" }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-[60%] h-auto py-20 rounded-xl ml-10"
+          className="w-full lg:w-[60%] h-auto py-10 lg:py-20 rounded-xl lg:ml-10 mt-8 lg:mt-0"
           style={{
             background: "rgba(0, 0, 0, 0.7)",
             boxShadow: "8px 8px 40px rgba(0, 0, 0, 0.9)",
@@ -108,7 +108,6 @@ const AppointmentContents = ({ isSidebarOpen }) => {
                 </option>
               </select>
             </div>
-
             <div className="w-full relative">
               <label className="text-white font-semibold">Date</label>
               <div className="flex items-center mt-2">

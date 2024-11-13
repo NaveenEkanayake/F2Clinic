@@ -123,13 +123,13 @@ const PetRecordContent = () => {
   return (
     <div className="w-full min-h-screen flex ml-10 items-center justify-center">
       <ToastContainer position="top-right" />
-      <div className="flex w-full max-w-5xl">
+      <div className="flex w-full max-w-5xl flex-col lg:flex-row">
         <PetRecordsvg />
         <motion.div
           initial={{ opacity: 0, translateY: "100%" }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-[60%] h-auto py-20 rounded-xl ml-10"
+          className="w-full sm:w-[80%] md:w-[70%] lg:w-[60%] h-auto py-20 rounded-xl ml-10 mt-8 lg:mt-0"
           style={{
             background: "rgba(0, 0, 0, 0.7)",
             boxShadow: "8px 8px 40px rgba(0, 0, 0, 0.9)",

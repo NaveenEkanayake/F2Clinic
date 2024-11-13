@@ -60,7 +60,7 @@ const CustomerLoginContents = () => {
         initial={{ opacity: 0, translateY: "100%" }}
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ duration: 0.8 }}
-        className="w-[40%] h-auto py-20 rounded-xl"
+        className=" w-[80%] xl:w-[40%] h-auto xl:h-auto  py-16 xl:py-20 rounded-xl"
         style={{
           background: "rgba(0, 0, 0, 0.7)",
           boxShadow: "8px 8px 40px rgba(0, 0, 0, 0.9)",
@@ -71,38 +71,41 @@ const CustomerLoginContents = () => {
         }}
       >
         <div className="w-full h-auto text-center">
-          <p className="text-white text-2xl font-semibold mb-5">
+          <p className="text-white text-lg xl:text-2xl font-semibold mb-5">
             Welcome Back to Furry Pet Clinic!!!
           </p>
         </div>
         <form
           onSubmit={handleSubmit}
-          className="w-full h-auto flex flex-col items-center gap-7 px-10"
+          className="xl:w-full h-auto flex flex-col items-center gap-7 px-10"
         >
-          <div className="w-full relative">
-            <label className="text-white font-semibold ">Email</label>
-            <div className="flex items-center mt-2">
-              <IoMailOutline className="text-white mr-3" />
-              <input
-                type="email"
-                name="email"
-                className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+          <div className="w-full grid gap-4">
+            <div className="relative">
+              <label className="text-white font-semibold">Email</label>
+              <div className="flex items-center mt-2 space-x-3">
+                <IoMailOutline className="text-white" />
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full p-2 xl:p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
+                  placeholder="Enter your email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          <div className="w-full relative">
-            <label className="text-white font-semibold">Password</label>
-            <div className="flex items-center mt-2">
-              <IoLockClosedOutline className="text-white mr-3" />
-              <input
-                type="password"
-                name="password"
-                className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+            <div className="relative">
+              <label className="text-white font-semibold">Password</label>
+              <div className="flex items-center mt-2 space-x-3">
+                <IoLockClosedOutline className="text-white" />
+                <input
+                  type="password"
+                  name="password"
+                  className="w-full p-2 xl:p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
+                  placeholder="Enter your password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
             </div>
             <div className="flex justify-center items-center mt-5">
               <Link

@@ -5,16 +5,16 @@ import {
   verifyCustomer,
   getAllNotifications,
   ISReadAllNotifications,
-} from "@/Api/config"; // Import your function
+} from "@/Api/config";
 
 const CustomerNotificationContent = ({
   isSidebarOpen,
   setNotificationsCount,
 }) => {
-  const [messages, setMessages] = useState([]); // State to hold notifications
+  const [messages, setMessages] = useState([]);
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
 
   const indexOfLastMessage = currentPage * itemsPerPage;
   const indexOfFirstMessage = indexOfLastMessage - itemsPerPage;
@@ -48,9 +48,7 @@ const CustomerNotificationContent = ({
 
         const results = await getAllNotifications();
         if (results && results.notifications) {
-          setMessages(results.notifications); // Set the notifications directly
-
-          // Calculate unread count after setting messages
+          setMessages(results.notifications);
           const unreadCount = results.notifications.filter(
             (notification) => !notification.isRead
           ).length;
@@ -87,10 +85,10 @@ const CustomerNotificationContent = ({
 
   return (
     <>
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center mr-28 mb-4">
         <button
           onClick={handleReadAll}
-          className="py-2 px-6 border-2 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 rounded-lg mr-12"
+          className="py-2 px-6 border-2 border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 rounded-lg"
         >
           Read all
         </button>
@@ -100,8 +98,10 @@ const CustomerNotificationContent = ({
         {currentMessages.map((notification) => (
           <div
             key={notification._id}
-            className={`h-[100px] bg-white ml-8 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 justify-between ${
-              isSidebarOpen ? "w-[1450px]" : "w-[1750px]"
+            className={`h-[100px] bg-white ml-10 mt-7 rounded-lg flex items-center text-black shadow-xl p-4 justify-between ${
+              isSidebarOpen
+                ? "w-[100%] md:w-[98%] lg:w-[98%] xl:w-[90%]"
+                : "w-[90%] md:w-[90%] lg:w-[90%] xl:w-[90%]"
             }`}
           >
             <div className="flex items-center justify-between flex-1">
@@ -113,7 +113,6 @@ const CustomerNotificationContent = ({
           </div>
         ))}
       </div>
-
       <div className="flex justify-between mt-5">
         <PreviousButton
           currentPage={currentPage}

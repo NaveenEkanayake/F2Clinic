@@ -197,7 +197,7 @@ const AppointmentTable = () => {
             ).map((appointment, index) => (
               <TableRow key={appointment._id}>
                 <TableCell component="th" scope="row">
-                  {`DR. ${appointment.Doctorname.join(", ")}`}
+                  {` ${appointment.Doctorname.join(", ")}`}
                 </TableCell>
                 <TableCell align="right">{appointment.Date}</TableCell>
                 <TableCell align="right">{appointment.Time}</TableCell>

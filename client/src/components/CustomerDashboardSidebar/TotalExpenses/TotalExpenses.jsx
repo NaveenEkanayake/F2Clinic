@@ -44,19 +44,16 @@ const TotalExpenses = () => {
     <div
       style={{
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         width: "100%",
-        height: "300px",
+        height: "200px",
       }}
     >
       <div
         style={{
           position: "relative",
-          width: "300px",
-          height: "300px",
-          left: "40px",
-          top: "40px",
+          width: "200px",
+          height: "200px",
+          top: "10px",
         }}
       >
         <PieChart
@@ -78,10 +75,18 @@ const TotalExpenses = () => {
               cy: 150,
             },
           ]}
-          width={500}
-          height={500}
+          width={400}
+          height={400}
         />
-        <div style={{ position: "absolute", top: "50px", left: "-70px" }}>
+        <div
+          style={{
+            position: "absolute",
+            bottom: "150px",
+            right: "40px",
+            maxHeight: "100%",
+            overflowY: "auto",
+          }}
+        >
           {appointmentPrices.length
             ? appointmentPrices.map((item, index) => (
                 <div

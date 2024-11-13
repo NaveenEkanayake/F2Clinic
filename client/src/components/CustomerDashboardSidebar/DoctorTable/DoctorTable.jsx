@@ -36,15 +36,13 @@ export default function DoctorTable() {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="doctor table">
+      <Table sx={{ minWidth: 550 }} aria-label="doctor table">
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
             <TableCell align="right">First Name</TableCell>
             <TableCell align="right">Last Name</TableCell>
             <TableCell align="right">Speciality</TableCell>
-            <TableCell align="right">Email</TableCell>
-            <TableCell align="right">Phone Number</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,8 +54,6 @@ export default function DoctorTable() {
               <TableCell align="right">{doctor.firstname}</TableCell>
               <TableCell align="right">{doctor.lastname}</TableCell>
               <TableCell align="right">{doctor.speciality}</TableCell>
-              <TableCell align="right">{doctor.email}</TableCell>
-              <TableCell align="right">{doctor.telephoneNumber}</TableCell>
             </TableRow>
           ))}
         </TableBody>

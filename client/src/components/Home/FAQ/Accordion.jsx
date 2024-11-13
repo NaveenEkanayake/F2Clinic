@@ -7,7 +7,7 @@ const Accordion = ({ title, answer }) => {
   return (
     <>
       <div className="py-2">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <Button
             title={title}
             icon={open ? "-" : "+"}
@@ -16,7 +16,7 @@ const Accordion = ({ title, answer }) => {
         </div>
       </div>
       <div
-        className={`overflow-hidden transition-all duration-200 ease-in-out text-white text-lg ${
+        className={`overflow-hidden transition-all duration-200 ease-in-out text-white text-base sm:text-lg ${
           open ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
         }`}
       >

@@ -196,7 +196,16 @@ const ViewPetTable = () => {
   return (
     <TableContainer component={Paper}>
       <ToastContainer position="top-right" />
-      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
+      <Table
+        sx={{
+          minWidth: 700,
+          "@media (max-width: 600px)": {
+            minWidth: "100%",
+            fontSize: "0.875rem",
+          },
+        }}
+        aria-label="custom pagination table"
+      >
         <TableBody>
           {rows.length === 0 ? (
             <TableRow>
@@ -207,26 +216,28 @@ const ViewPetTable = () => {
           ) : (
             rows.map((row, index) => (
               <TableRow key={row._id}>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" sx={{ padding: "8px" }}>
                   <img
                     src={row.Petimage}
                     alt={row.Petname}
                     style={{ width: 50, height: 50 }}
                   />
                 </TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" sx={{ padding: "8px" }}>
                   {row.Petname}
                 </TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" sx={{ padding: "8px" }}>
                   {row.Breed}
                 </TableCell>
-                <TableCell align="right">{row.Age}</TableCell>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ padding: "8px" }}>
+                  {row.Age}
+                </TableCell>
+                <TableCell align="right" sx={{ padding: "8px" }}>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={() => handleUpdate(index)}
-                    style={{ marginRight: 10 }}
+                    sx={{ marginRight: 2 }}
                   >
                     Update
                   </Button>
@@ -259,6 +270,11 @@ const ViewPetTable = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
+              sx={{
+                "@media (max-width: 600px)": {
+                  fontSize: "0.75rem",
+                },
+              }}
             />
           </TableRow>
         </TableFooter>

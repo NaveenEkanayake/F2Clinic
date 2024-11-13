@@ -37,13 +37,18 @@ const AppointmentExpenses = ({ isSidebarOpen }) => {
     return data;
   };
 
-  const weekdays = [
-    "monday",
-    "tuesday",
-    "wed",
-    "thursday",
-    "friday",
-    "saturday",
+  // You can adjust this array to include actual months
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
   ];
 
   return (
@@ -55,8 +60,8 @@ const AppointmentExpenses = ({ isSidebarOpen }) => {
           showMark: ({ index }) => index % 2 === 0,
         },
       ]}
-      width={450}
-      height={400}
+      width={250}
+      height={250}
     />
   );
 };

@@ -6,8 +6,8 @@ const CustomerDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <div className="flex h-screen">
-      <div className="flex-none">
+    <div className="flex">
+      <div className="flex-none ">
         <DashboardSidebar open={isSidebarOpen} setOpen={setIsSidebarOpen} />
       </div>
       <div className="flex-grow">

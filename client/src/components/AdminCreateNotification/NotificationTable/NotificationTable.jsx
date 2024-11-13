@@ -16,7 +16,7 @@ import {
 } from "../../../Api/config";
 
 const NotificationTable = () => {
-  const [emails, setEmails] = useState([]); // Renamed for clarity
+  const [emails, setEmails] = useState([]);
   const [orderDirection, setOrderDirection] = useState("asc");
   const [orderBy, setOrderBy] = useState("email");
 
@@ -31,7 +31,6 @@ const NotificationTable = () => {
 
         const results = await getAllCustomerAndConsultantEmails();
         if (results) {
-          // Combine both customers and consultants into a single array
           const formattedEmails = [
             ...results.formattedCustomers.map((customer) => ({
               email: customer.email,
@@ -39,10 +38,10 @@ const NotificationTable = () => {
             })),
             ...results.formattedConsultants.map((consultant) => ({
               email: consultant.email,
-              role: "consultant", // Set role for consultants
+              role: "consultant",
             })),
           ];
-          setEmails(formattedEmails); // Store both in state
+          setEmails(formattedEmails);
         } else {
           console.error("No data found.");
         }
@@ -74,7 +73,13 @@ const NotificationTable = () => {
   return (
     <TableContainer
       component={Paper}
-      sx={{ maxWidth: 1000, height: 680, margin: "20px auto", boxShadow: 3 }}
+      sx={{
+        maxWidth: "100%", // Ensure it takes full width
+        height: 680,
+        margin: "20px auto",
+        boxShadow: 3,
+        overflowX: "auto", // Allows horizontal scrolling on small screens
+      }}
     >
       <Typography
         variant="h6"
@@ -83,7 +88,7 @@ const NotificationTable = () => {
       >
         Consultant and Customer Emails
       </Typography>
-      <Table>
+      <Table sx={{ minWidth: 650 }}>
         <TableHead>
           <TableRow>
             <TableCell align="center">

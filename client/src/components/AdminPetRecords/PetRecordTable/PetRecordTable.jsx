@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -14,9 +14,8 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-import Button from "@mui/material/Button";
+import { getAllConsultantpetRecords } from "@/Api/config";
 
-// Pagination Actions Component
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -79,20 +78,9 @@ function TablePaginationActions(props) {
   );
 }
 
-// Sample data for table rows
-function createData(petName, petImage, age, breed) {
-  return { petName, petImage, age, breed };
-}
-
-const rows = [
-  createData("Buddy", "https://via.placeholder.com/50", 3, "Golden Retriever"),
-  createData("Max", "https://via.placeholder.com/50", 5, "Bulldog"),
-  createData("Bella", "https://via.placeholder.com/50", 2, "Beagle"),
-  createData("Rocky", "https://via.placeholder.com/50", 4, "German Shepherd"),
-  createData("Lucy", "https://via.placeholder.com/50", 1, "Poodle"),
-].sort((a, b) => (a.petName < b.petName ? -1 : 1));
-
 const PetRecordTable = () => {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -108,24 +96,44 @@ const PetRecordTable = () => {
     setPage(0);
   };
 
-  const handleDelete = (rowIndex) => {
-    console.log("Delete row", rowIndex);
-  };
+  useEffect(() => {
+    const fetchConsultantPetRecords = async () => {
+      setLoading(true);
+      try {
+        const results = await getAllConsultantpetRecords();
 
-  const handleUpdate = (rowIndex) => {
-    console.log("Update row", rowIndex);
-  };
+        if (
+          results &&
+          results.Retrieveddata &&
+          results.Retrieveddata.length > 0
+        ) {
+          const formattedRows = results.Retrieveddata.map((record) => ({
+            petName: record.Petname,
+            petImage: record.Petimage,
+            age: record.Age,
+            breed: record.Breed,
+          }));
+          setRows(formattedRows);
+        } else {
+          console.error("No Pet Records found.");
+        }
+      } catch (error) {
+        console.error("Error fetching Pet Records:", error.response || error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConsultantPetRecords();
+  }, []);
 
   return (
     <TableContainer component={Paper}>
-      <Table
-        sx={{ minWidth: 700, backgroundColor: "slate-700" }}
-        aria-label="custom pagination table"
-      >
+      <Table sx={{ minWidth: 700 }} aria-label="custom pagination table">
         <TableBody>
           {rows
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, index) => (
+            .map((row) => (
               <TableRow key={row.petName}>
                 <TableCell align="left">{row.petName}</TableCell>
                 <TableCell align="right">
@@ -137,26 +145,8 @@ const PetRecordTable = () => {
                 </TableCell>
                 <TableCell align="right">{row.age} years</TableCell>
                 <TableCell align="right">{row.breed}</TableCell>
-                <TableCell align="right">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleUpdate(index)}
-                    style={{ marginRight: 10 }}
-                  >
-                    Update
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
               </TableRow>
             ))}
-
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
               <TableCell colSpan={6} />
