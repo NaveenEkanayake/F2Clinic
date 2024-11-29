@@ -9,7 +9,6 @@
 
 A full-stack web application developed to manage the operations of a veterinary clinic with a focus on user-friendly design and seamless functionality.
 
----
 
 ## Table of Contents
 
@@ -19,13 +18,13 @@ A full-stack web application developed to manage the operations of a veterinary 
 - [Services Provided](#services-provided)
 - [Collaborators](#collaborators)
 
----
+
 
 ## About the Project
 
 The **Furry Pet Clinic Management System** streamlines operations for veterinary clinics, offering tools for managing consultants, appointments, inventory, and notifications. This project follows the **MVC (Model-View-Controller)** architecture to ensure a clean and maintainable codebase, promoting scalability and ease of maintenance. The system enhances efficiency by integrating various services into a single platform, making it easier for clinic staff and customers to manage their operations.
 
----
+
 
 ## Technologies Used
 
@@ -34,7 +33,7 @@ The **Furry Pet Clinic Management System** streamlines operations for veterinary
 - **Database**: MongoDB
 - **Architecture**: MVC Structure
 
----
+
 
 ## Installation
 
@@ -43,15 +42,15 @@ Follow these steps to run the project locally:
 ### 1. Clone the repository:
 
 ###
-git clone https://github.com/your-username/furry-pet-clinic.git
+git clone https://github.com/NaveenEkanayake/F2Clinic.git
 
 # Install Dependencies
 
 ### Frontend:
-Navigate to the client directory and install the required dependencies.-npm i 
+Navigate to the client directory and install the required dependencies.-npm install 
 
 ### Backend:
-Navigate to the server directory and install the required dependencies.- npm i 
+Navigate to the server directory and install the required dependencies.- npm install 
 
 # Run the Application
 
