@@ -82,7 +82,7 @@ const PasswordForm = () => {
                 name="password"
                 value={password}
                 className="w-full p-3 rounded-lg border border-gray-200 bg-transparent text-white focus:outline-none"
-                placeholder="Enter your current password"
+                placeholder="Enter your New password"
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
