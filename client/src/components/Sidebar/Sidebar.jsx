@@ -33,7 +33,7 @@ const Sidebar = () => {
           alt="Logo"
         />
         <h1
-          className={`xl:origin-center xl:ml-0 ml-[-50px] text-white text-[24px] font-normal transition-transform duration-300 ${
+          className={`xl:origin-center xl:ml-0 ml-[-20px] text-white text-[24px] md:font-normal font-normal transition-transform duration-300 ${
             open ? "xl:scale-100  text-nowrap" : "scale-0"
           }`}
         >

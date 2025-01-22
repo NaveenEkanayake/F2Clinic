@@ -160,7 +160,7 @@ const DashboardContents = ({ isSidebarOpen }) => {
                 color: "white",
               }}
               style={{
-                marginLeft: "50px",
+                marginLeft: "150px",
                 height: "707px",
                 borderRadius: "20px",
               }}

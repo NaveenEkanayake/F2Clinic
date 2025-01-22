@@ -21,6 +21,14 @@ const ConsultantContents = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Telephone validation
+    const telephoneRegex = /^[0-9]{10}$/; // Ensures exactly 10 digits
+    if (!telephoneRegex.test(formData.telephoneNumber)) {
+      toast.error("Please enter a valid 10-digit telephone number.");
+      return;
+    }
+
     setLoading(true);
 
     try {
